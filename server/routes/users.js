@@ -1,0 +1,131 @@
+const express = require('express')
+const router = express.Router()
+const auth = require('../middleware/auth')
+const User = require('../models/user')
+
+router.get('/', function (req, res) {
+  User.find().exec(function (err, users) {
+    if (err) {
+      res.status(500).json({
+        message: err.message
+      })
+    } else {
+      res.status(200).json(users)
+    }
+  })
+})
+
+router.post('/', function (req, res) {
+  const reqBody = {
+    username: req.body.username,
+    email: req.body.email,
+    emailConfirm: req.body.emailConfirm,
+    password: req.body.password,
+    passwordConfirm: req.body.passwordConfirm
+  }
+
+  if (reqBody.username) {
+    if (reqBody.email && reqBody.email === reqBody.emailConfirm) {
+      if (reqBody.password && reqBody.password === reqBody.passwordConfirm) {
+        User.findOne({
+          $or: [
+            {
+              username: reqBody.username
+            },
+            {
+              email: reqBody.email
+            }
+          ]
+        }).exec(function (err, existingUser) {
+          if (err) {
+            res.status(500).json({
+              message: err.message
+            })
+          } else if (existingUser) {
+            if (existingUser.username == reqBody.username) {
+              res.status(400).json({
+                message: 'Username already taken by another user.'
+              })
+            } else if(existingUser.email === email) {
+              res.status(400).json({
+                message: 'Email already registered by another user.'
+              })
+            }
+          } else {
+            const newUser = new User({
+              email: reqBody.email,
+              username: reqBody.username,
+              joined: new Date()
+            })
+
+            newUser.setPassword(reqBody.password)
+
+            newUser.save(function (err, user) {
+              if (err) {
+                res.status(500).json({
+                  message: err.message
+                })
+              } else {
+                auth.generateToken(user, function (err, token) {
+                  if (err) {
+                    res.status(500).json({
+                      message: err.message
+                    })
+                  } else {
+                    res.status(200).json(token)
+                  }
+                })
+              }
+            })
+          }
+        })
+      } else {
+        res.status(400).json({
+          message: 'Please specify two matching passwords.'
+        })
+      }
+    } else {
+      res.status(400).json({
+        message: 'Please specify two matching email addresses.'
+      })
+    }
+  } else {
+    res.status(400).json({
+      message: 'A username is required.'
+    })
+  }
+})
+
+router.get('/username/:username', function (req, res) {
+  User.findOne({ username: req.params.username }).exec(function (err, user) {
+    if (err) {
+      res.status(500).json({
+        message: err.message
+      })
+    } else if (user) {
+      res.status(200).json(user.toJSON())
+    } else {
+      res.status(404).json({
+        message: 'User not found.'
+      })
+    }
+  })
+})
+
+router.get('/id/:id', function (req, res) {
+  User.findById(req.params.id).exec(function (err, user) {
+    if (err) {
+      res.status(500).json({
+        message: err.message
+      })
+    } else if (user) {
+      res.status(200).json(user.toJSON())
+    } else {
+      res.status(404).json({
+        message: 'User not found.'
+      })
+    }
+  })
+})
+
+module.exports = router

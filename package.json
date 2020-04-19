@@ -1,0 +1,45 @@
+{
+  "name": "wtf-pwa",
+  "version": "1.0.0",
+  "description": "PWA version of my website",
+  "author": "Michael VanOverbeek",
+  "private": true,
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development nodemon server/index.js --watch server",
+    "dev:debug": "cross-env NODE_ENV=development nodemon --inspect server/index.js --watch server",
+    "build": "nuxt build",
+    "start": "cross-env NODE_ENV=production node server/index.js",
+    "generate": "nuxt generate",
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore ."
+  },
+  "dependencies": {
+    "@nuxtjs/auth": "github:nuxt-community/auth-module#dev",
+    "@nuxtjs/axios": "^5.3.6",
+    "@nuxtjs/dotenv": "^1.4.0",
+    "@nuxtjs/markdownit": "^1.2.9",
+    "@nuxtjs/pwa": "^3.0.0-0",
+    "body-parser": "^1.19.0",
+    "cross-env": "^5.2.0",
+    "express": "^4.16.4",
+    "jsonwebtoken": "^8.5.1",
+    "markdown-it-attrs": "^3.0.2",
+    "markdown-it-div": "^1.1.0",
+    "markdown-it-sanitizer": "^0.4.3",
+    "moment": "^2.24.0",
+    "mongoose": "^5.9.9",
+    "nuxt": "^2.0.0",
+    "slugify": "^1.4.0",
+    "vuex-persistedstate": "^3.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.9",
+    "@nuxtjs/vuetify": "^1.0.0",
+    "@nuxtjs/eslint-config": "^2.0.0",
+    "@nuxtjs/eslint-module": "^1.0.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^6.1.0",
+    "eslint-plugin-nuxt": ">=0.4.2",
+    "@nuxtjs/stylelint-module": "^3.1.0",
+    "stylelint": "^10.1.0"
+  }
+}

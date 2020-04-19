@@ -1,0 +1,25 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "name": "Launch (Development)",
+            "runtimeExecutable": "npm",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "runtimeArgs": [ "run", "dev:debug" ],
+            "console": "integratedTerminal",
+            "port": 9229
+        },
+        {
+            "type": "node",
+            "name": "Launch (Production)",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [ "run", "start" ],
+            "cwd": "${workspaceFolder}",
+            "request": "launch",
+            "console": "integratedTerminal",
+            "preLaunchTask": "Build Nuxt application"
+        }
+    ]
+}
