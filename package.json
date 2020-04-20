@@ -27,19 +27,19 @@
     "markdown-it-sanitizer": "^0.4.3",
     "moment": "^2.24.0",
     "mongoose": "^5.9.9",
+    "@nuxtjs/vuetify": "^1.11.0",
     "nuxt": "^2.0.0",
     "slugify": "^1.4.0",
     "vuex-persistedstate": "^3.0.1"
   },
   "devDependencies": {
-    "nodemon": "^1.18.9",
-    "@nuxtjs/vuetify": "^1.0.0",
     "@nuxtjs/eslint-config": "^2.0.0",
     "@nuxtjs/eslint-module": "^1.0.0",
+    "@nuxtjs/stylelint-module": "^3.1.0",
     "babel-eslint": "^10.0.1",
     "eslint": "^6.1.0",
     "eslint-plugin-nuxt": ">=0.4.2",
-    "@nuxtjs/stylelint-module": "^3.1.0",
+    "nodemon": "^1.18.9",
     "stylelint": "^10.1.0"
   }
 }
