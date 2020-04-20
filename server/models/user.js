@@ -12,7 +12,13 @@ const UserSchema = new Schema({
   about: { type: String, required: false, default: '' },
   avatar: { type: String, required: false, default: '' },
   salt: { type: String, required: true, private: true },
-  hash: { type: String, required: true, private: true }
+  hash: { type: String, required: true, private: true },
+  admin: { type: Boolean, default: false },
+  editor: { type: Boolean, default: false },
+  moderator: { type: Boolean, default: false },
+  banned: { type: Boolean, default: false },
+  bannedDate: { type: Date, default: null },
+  owner: { type: Boolean, default: false }
 })
 
 UserSchema.methods.setPassword = function (password) {

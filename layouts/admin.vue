@@ -15,7 +15,7 @@
         </v-list-item>
         <v-divider />
 
-        <v-list-item v-for="page of pages" :key="page" :to="page.to">
+        <v-list-item v-for="page of pages" :key="page.name" :to="page.to">
           <v-list-item-icon>
             <v-icon>mdi-{{ page.icon }}</v-icon>
           </v-list-item-icon>
@@ -42,6 +42,9 @@
 
       <v-btn icon @click="toggleDarkMode()">
         <v-icon>mdi-invert-colors</v-icon>
+      </v-btn>
+      <v-btn icon to="/">
+        <v-icon>mdi-exit-to-app</v-icon>
       </v-btn>
     </v-app-bar>
 

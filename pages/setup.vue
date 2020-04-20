@@ -1,12 +1,12 @@
 <template>
   <div>
+    <h1>Initial Setup</h1>
     <nuxt-child />
   </div>
 </template>
 
 <script>
 export default {
-  layout: 'admin',
-  middleware: 'admin'
+  layout: 'setup'
 }
 </script>

@@ -19,6 +19,7 @@ async function start () {
 
   const postsRoute = require('./routes/posts')
   const projectsRoute = require('./routes/projects')
+  const setupRouter = require('./routes/setup')
   const usersRoute = require('./routes/users')
   const authRoute = require('./routes/auth')
 
@@ -34,6 +35,7 @@ async function start () {
 
   // give API routes so we have a backend.
   app.use('/api/posts', postsRoute);
+  app.use('/api/setup', setupRouter)
   app.use('/api/projects', projectsRoute);
   app.use('/api/users', usersRoute);
   app.use('/api/auth', authRoute)

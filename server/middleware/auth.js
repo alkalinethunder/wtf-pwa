@@ -30,9 +30,19 @@ module.exports = {
           res.status(401).json({
             message: err.message
           })
+        } else if (user) {
+          if (user.banned) {
+            res.status(451).json({
+              message: 'User has been banned.'
+            })
+          } else {
+            req.user = user
+            next()
+          }
         } else {
-          req.user = user
-          next()
+          res.status(401).json({
+            message: 'User must be authenticated to access this endpoint.'
+          })
         }
       })
     } else {
@@ -41,9 +51,31 @@ module.exports = {
       })
     }
   },
+  editor (req, res, next) {
+    this.authenticate(req, res, function () {
+      if(req.user && (req.user.admin || req.user.editor)) {
+        next()
+      } else {
+        res.status(401).json({
+          message: 'User must have editor permission to access this endpoint.'
+        })
+      }
+    })
+  },
+  moderator (req, res, next) {
+    this.authenticate(req, res, function () {
+      if(req.user && (req.user.admin || req.user.editor || req.user.moderator)) {
+        next()
+      } else {
+        res.status(401).json({
+          message: 'User must be a moderator to access this endpoint.'
+        })
+      }
+    })
+  },
   admin (req, res, next) {
     this.authenticate(req, res, function () {
-      if (req.user && req.user.administrator) {
+      if (req.user && req.user.admin) {
         next()
       } else {
         res.status(403).json({

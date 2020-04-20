@@ -2,6 +2,11 @@ const colors = require('vuetify/es5/util/colors').default
 
 module.exports = {
   mode: 'spa',
+  router: {
+    middleware: [
+      'setup'
+    ]
+  },
   /*
   ** Headers of the page
   */
@@ -34,7 +39,7 @@ module.exports = {
         },
         endpoints: {
           login: { url: '/api/auth/login', method: 'post' },
-          user: { url: '/api/auth', method: 'get', propertyName: false },
+          user: { url: '/api/auth/user', method: 'get', propertyName: false },
           refresh: { url: '/api/auth/refresh', method: 'post' },
           logout: { url: '/api/auth/logout', method: 'post' }
         },
