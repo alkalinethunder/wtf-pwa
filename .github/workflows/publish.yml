@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy to Calvin Server
+      - name: Really deploy to Calvin Server
         uses: appleboy/ssh-action@master
         with:
           host: calvin.alkalinethunder.wtf
