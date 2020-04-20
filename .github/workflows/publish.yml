@@ -15,7 +15,7 @@ jobs:
         with:
           host: calvin.alkalinethunder.wtf
           username: node-deploy
-          key: ${{ secrets.SSH_KEY }}
+          key: ${{ secret.SSH_KEY }}
           port: 22
           script: |
             sh ~/backup-uploads.sh
