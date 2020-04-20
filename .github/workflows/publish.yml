@@ -1,39 +1,25 @@
-# This is a basic workflow to help you get started with Actions
+name: Node GitHub CD
 
-name: CI
-
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    branches:
+      - master
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Set up Node.js
-      uses: actions/setup-node@v1
-      with:
-        node-version: "10.x"
-    
-    - name: Check-out code
-      uses: actions/checkout@v2
-
-    - name: Import SSH key
-      uses: shimataro/ssh-key-action@v2
-      with:
-        key: ${{ secrets.SSH_KEY }}
-        known_hosts: ${{ secrets.KNOWN_HOSTS }}
-
-    - name: Install NPM dependencies
-      run: npm ci
-    
-    - name: Build the website
-      run: npm run build
-
-    - name: Deploy to the server
-      run: scp -r <nuxt output dir> <server user>@<host>:path
+      - name: Deploy to Calvin Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: calvin.alkalinethunder.wtf
+          username: node-deploy
+          key: {{ secrets.SSH_KEY }}
+          port: 22
+          script: |
+            sh ~/backup-uploads.sh
+            cd ~/wtf-pwa
+            git pull origin master
+            npm install --production
+            sh ~/restore-uploads.sh
