@@ -85,7 +85,7 @@ module.exports = {
     })
   },
   refresh (req, res, next) {
-    const refreshToken = req.body.token
+    const refreshToken = req.body.refresh_token
 
     if (refreshToken) {
       Token.findOne({ token: refreshToken }).exec(function (err, token) {
