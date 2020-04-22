@@ -1,6 +1,13 @@
 <template>
   <div>
-    <h1 class="display-2">Posts</h1>
+    <v-toolbar>
+      <v-toolbar-title>Posts</v-toolbar-title>
+      <v-spacer />
+
+      <v-btn icon to="/admin/create-post">
+        <v-icon>mdi-plus</v-icon>
+      </v-btn>
+    </v-toolbar>
 
     <v-list>
       <v-list-item v-for="post in posts" :key="post._id">
