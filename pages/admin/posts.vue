@@ -24,21 +24,6 @@
             </v-btn>
           </template>
 
-          <v-dialog :value="more[post._id]">
-            <v-card>
-              <v-card-title class="headline grey lighter-2" primary-title>
-                More info: {{ post.name }}
-              </v-card-title>
-              <v-divider />
-              <v-card-actions>
-                <v-spacer />
-                <v-btn text @click="more[post._id] = false">
-                  Done
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-
           <v-list dense>
             <v-list-item @click="moreInfo(post)">
               <v-list-item-content>
@@ -46,7 +31,7 @@
               </v-list-item-content>
             </v-list-item>
 
-            <v-list-item>
+            <v-list-item @click="showDeleteDialog(post)">
               <v-list-item-content>
                 <v-list-item-title>Delete</v-list-item-title>
               </v-list-item-content>
@@ -55,6 +40,49 @@
         </v-menu>
       </v-list-item>
     </v-list>
+
+    <v-dialog v-model="deleteOpen">
+      <v-card v-if="more">
+        <v-card-title
+          class="headline grey lighter-2"
+          primary-title
+        >
+          Delete "{{ more.name }}"
+        </v-card-title>
+
+        <v-card-text>
+          Are you sure you want to permanently delete this blog post?
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer />
+          <v-btn text @click="deletePost(more)">
+            Yes
+          </v-btn>
+          <v-btn text @click="deleteOpen = false">
+            No
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="moreOpen">
+      <v-card v-if="more">
+        <v-card-title
+          class="headline grey lighter-2"
+          primary-title
+        >
+          {{ more.name }} - More Info
+        </v-card-title>
+
+        <v-card-actions>
+          <v-spacer />
+          <v-btn text @click="moreOpen = false">
+            Close
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -67,31 +95,55 @@ export default {
       posts: [],
       error: false,
       errorMessage: '',
-      more: []
+      more: null,
+      moreOpen: false,
+      deleteOpen: false
     }
   },
   mounted () {
-    this.$axios.get('/api/posts')
-      .then((res) => {
-        this.posts = res.data
-        for (const post of this.posts) {
-          this.more[post._id] = false
-        }
-      }).catch((err) => {
-        this.posts = []
-        this.error = true
-        this.errorMessage = err.message
-      })
+    this.getPosts()
   },
   methods: {
+    getPosts () {
+      this.$axios.get('/api/posts')
+        .then((res) => {
+          this.posts = res.data
+        }).catch((err) => {
+          this.posts = []
+          this.error = true
+          this.errorMessage = err.message
+        })
+    },
     createdAgo (post) {
       return moment(post.created).fromNow()
+    },
+    showDeleteDialog (post) {
+      this.more = post
+      this.moreOpen = false
+      this.deleteOpen = true
     },
     postEdit (post) {
       return `/admin/posts/edit/${post.slug}`
     },
     moreInfo (post) {
-      this.more[post._id] = true
+      this.more = post
+      this.deleteOpen = false
+      this.moreOpen = true
+    },
+    deletePost (post) {
+      this.$axios.post(`/api/posts/${post.slug}/delete`)
+        .then((res) => {
+          if (res.data.ok) {
+            this.getPosts()
+            this.more = null
+            this.deleteOpen = false
+          }
+        }).catch((err) => {
+          if (err) {
+            this.error = true
+            this.errorMessage = err.message
+          }
+        })
     }
   }
 }

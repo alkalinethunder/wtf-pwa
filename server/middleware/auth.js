@@ -2,30 +2,38 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/user')
 const Token = require('../models/token')
 
-function generateToken (user, cb) {
-  const access = jwt.sign(user.toJSON(), process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' })
-  const refresh = jwt.sign(user.toJSON(), process.env.REFRESH_TOKEN_SECRET)
+class Auth {
+  constructor () {
+    this.generateToken = this.generateToken.bind(this)
+    this.editor = this.editor.bind(this)
+    this.admin = this.admin.bind(this)
+    this.moderator = this.moderator.bind(this)
+    this.refresh = this.refresh.bind(this)
+    this.owner = this.owner.bind(this)
+  }
 
-  const storedToken = new Token({
-    token: refresh
-  })
+  generateToken (user, cb) {
+    const access = jwt.sign(user.toJSON(), process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' })
+    const refresh = jwt.sign(user.toJSON(), process.env.REFRESH_TOKEN_SECRET)
 
-  storedToken.save(function (err, token) {
-    cb(err, {
-      access,
-      refresh
+    const storedToken = new Token({
+      token: refresh
     })
-  })
-}
 
-module.exports = {
-  generateToken,
+    storedToken.save((err, token) => {
+      cb(err, {
+        access,
+        refresh
+      })
+    })
+  }
+
   authenticate (req, res, next) {
     const authHeader = req.headers.authorization
     const token = authHeader && authHeader.split(' ')[1]
 
     if (token) {
-      jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (err, user) {
+      jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
         if (err) {
           res.status(401).json({
             message: err.message
@@ -50,10 +58,11 @@ module.exports = {
         message: 'User must be authenticated to access this endpoint.'
       })
     }
-  },
+  }
+
   editor (req, res, next) {
-    this.authenticate(req, res, function () {
-      if(req.user && (req.user.admin || req.user.editor)) {
+    this.authenticate(req, res, () => {
+      if(req.user && (req.user.owner || req.user.admin || req.user.editor)) {
         next()
       } else {
         res.status(401).json({
@@ -61,10 +70,11 @@ module.exports = {
         })
       }
     })
-  },
+  }
+
   moderator (req, res, next) {
-    this.authenticate(req, res, function () {
-      if(req.user && (req.user.admin || req.user.editor || req.user.moderator)) {
+    this.authenticate(req, res, () => {
+      if(req.user && (req.user.owner || req.user.admin || req.user.editor || req.user.moderator)) {
         next()
       } else {
         res.status(401).json({
@@ -72,10 +82,23 @@ module.exports = {
         })
       }
     })
-  },
+  }
+
+  owner (req, res, next) {
+    this.authenticate(req, res, () => {
+      if (req.user && req.user.owner) {
+        next()
+      } else {
+        res.status(403).json({
+          message: 'User must be an owner to access this endpoint.'
+        })
+      }
+    })
+  }
+
   admin (req, res, next) {
-    this.authenticate(req, res, function () {
-      if (req.user && req.user.admin) {
+    this.authenticate(req, res, () => {
+      if (req.user && (req.user.owner || req.user.admin)) {
         next()
       } else {
         res.status(403).json({
@@ -83,30 +106,31 @@ module.exports = {
         })
       }
     })
-  },
+  }
+
   refresh (req, res, next) {
     const refreshToken = req.body.refresh_token
 
     if (refreshToken) {
-      Token.findOne({ token: refreshToken }).exec(function (err, token) {
+      Token.findOne({ token: refreshToken }).exec((err, token) => {
         if (err) {
           res.status(500).json({
             message: err.mesage
           })
         } else if (token) {
-          jwt.verify(token.token, process.env.REFRESH_TOKEN_SECRET, function (err, user) {
+          jwt.verify(token.token, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
             if (err) {
               res.status(500).json({
                 message: err.message
               })
             } else if (user) {
-              User.findOne({ email: user.email }).exec(function (err, realUser) {
+              User.findOne({ email: user.email }).exec((err, realUser) => {
                 if (err) {
                   res.status(500).json({
                     message: err.message
                   })
                 } else if (realUser) {
-                  generateToken(realUser, function (err, token) {
+                  this.generateToken(realUser, (err, token) => {
                     if (err) {
                       res.status(500).json({
                         message: err.message
@@ -138,3 +162,5 @@ module.exports = {
     }
   }
 }
+
+module.exports = new Auth()

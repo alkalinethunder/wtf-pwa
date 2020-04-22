@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const slugify = require('slugify')
 const Post = require('../models/post');
+const auth = require('../middleware/auth')
 
 router.get('/:slug', function (req, res) {
   Post.findOne({ slug: req.params.slug })
@@ -18,6 +19,25 @@ router.get('/:slug', function (req, res) {
         })
       }
     })
+})
+
+router.post('/:slug/delete', auth.admin, function (req, res) {
+  const slug = req.params.slug
+  Post.deleteOne({
+    slug
+  }).exec(function (err, result) {
+    if (err) {
+      res.status(500).json({
+        message: err.message
+      })
+    } else if (result.ok) {
+      res.status(200).json(result)
+    } else {
+      res.status(404).json({
+        message: 'Post not found.'
+      })
+    }
+  })
 })
 
 router.get('/', function (req, res) {

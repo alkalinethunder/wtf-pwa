@@ -21,7 +21,7 @@ const UserSchema = new Schema({
   owner: { type: Boolean, default: false }
 })
 
-UserSchema.methods.setPassword = function (password) {
+ UserSchema.methods.setPassword = function (password) {
   this.salt = crypto.randomBytes(64).toString('hex')
   this.hash = crypto.pbkdf2Sync(password, this.salt, ITERATIONS, KEY_LENGTH, 'sha512').toString('hex')
 }
