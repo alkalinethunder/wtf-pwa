@@ -31,4 +31,11 @@ UserSchema.methods.validatePassword = function (password) {
   return this.hash === requestedHash
 }
 
+UserSchema.methods.toJSON = function () {
+  const obj = this.toObject()
+  delete obj.hash
+  delete obj.salt
+  return obj
+}
+
 module.exports = mongoose.model('user', UserSchema)
