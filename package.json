@@ -15,7 +15,6 @@
   "dependencies": {
     "@nuxtjs/auth": "github:nuxt-community/auth-module#dev",
     "@nuxtjs/axios": "^5.3.6",
-    "@nuxtjs/dotenv": "^1.4.0",
     "@nuxtjs/markdownit": "^1.2.9",
     "@nuxtjs/pwa": "^3.0.0-0",
     "body-parser": "^1.19.0",
@@ -33,6 +32,7 @@
     "vuex-persistedstate": "^3.0.1"
   },
   "devDependencies": {
+    "@nuxtjs/dotenv": "^1.4.1",
     "@nuxtjs/eslint-config": "^2.0.0",
     "@nuxtjs/eslint-module": "^1.0.0",
     "@nuxtjs/stylelint-module": "^3.1.0",
