@@ -55,7 +55,9 @@
         >
           <v-menu offset-y>
             <template v-slot:activator="{ on }">
-              <v-tab v-on="on">User menu</v-tab>
+              <v-tab v-on="on">
+                User menu
+              </v-tab>
             </template>
             <v-list dense class="py-0">
               <v-list-item :two-line="$auth.user.displayName">

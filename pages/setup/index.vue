@@ -8,8 +8,8 @@
 
     <h4>Administrator account</h4>
 
-    <v-form @submit="createAdminAccount" v-model="valid">
-      <v-text-field label="Admin username" v-model="admin.username" :rules="admin.usernameRules" />
+    <v-form v-model="valid" @submit="createAdminAccount">
+      <v-text-field v-model="admin.username" label="Admin username" :rules="admin.usernameRules" />
 
       <v-row>
         <v-col>

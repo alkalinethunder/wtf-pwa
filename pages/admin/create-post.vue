@@ -19,9 +19,12 @@
         </v-form>
       </v-col>
       <v-col>
-        <h2 class="headline">{{ post.name || 'Untitled post' }}</h2>
+        <h2 class="headline">
+          {{ post.name || 'Untitled post' }}
+        </h2>
         <p>{{ post.excerpt || 'This is the excerpt for the post and will show on the blog and homepage.  If nothing is written here, no excerpt will be shown.' }}</p>
 
+        <!-- eslint-disable vue/no-v-html -->
         <div v-html="$md.render(post.body)" />
       </v-col>
     </v-row>
