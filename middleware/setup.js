@@ -1,15 +1,17 @@
 export default async function (context) {
-  try {
-    const setupStatus = await context.app.$axios.get('/api/setup/configure')
+  if (context.route.path !== '/installation-error') {
+    try {
+      const setupStatus = await context.app.$axios.get('/api/setup/configure')
 
-    if (setupStatus.data.done) {
-      if (context.route.path.startsWith('/setup') && context.route.path !== '/setup/done') {
-        context.redirect('/setup/done')
+      if (setupStatus.data.done) {
+        if (context.route.path.startsWith('/setup') && context.route.path !== '/setup/done') {
+          context.redirect('/setup/done')
+        }
+      } else if (!context.route.path.startsWith('/setup') || context.route.path === '/setup/done') {
+        context.redirect('/setup')
       }
-    } else if (!context.route.path.startsWith('/setup') || context.route.path === '/setup/done') {
-      context.redirect('/setup')
+    } catch (err) {
+      context.redirect('/installation-error')
     }
-  } catch (err) {
-    context.redirect('/installation-error')
   }
 }
