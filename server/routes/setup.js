@@ -20,7 +20,7 @@ router.get('/configure', function (req, res) {
 })
 
 router.post('/configure', function (req, res) {
-  User.findOne({ owner: true }).exec((err, owner) {
+  User.findOne({ owner: true }).exec((err, owner) => {
     if (err) {
       res.status(500).json({
         message: err.message
