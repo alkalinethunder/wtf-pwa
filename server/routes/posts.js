@@ -52,7 +52,7 @@ router.get('/', function (req, res) {
   })
 })
 
-router.post('/', function (req, res) {
+router.post('/', auth.editor, function (req, res) {
   const newPost = new Post({
     name: req.body.name,
     slug: slugify(req.body.name),
