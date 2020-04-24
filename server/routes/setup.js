@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+const SiteSetting = require('../models/sitesetting')
 
 const User = require('../models/user')
 
@@ -12,8 +13,17 @@ router.get('/configure', function (req, res) {
         message: err.message
       })
     } else {
-      res.status(200).json({
-        done: !!user
+      SiteSetting.findOne({}).exec(function (err, settings) {
+        if (err) {
+          res.status(500).json({
+            message: err.message
+          })
+        } else {
+          res.status(200).json({
+            settings,
+            done: !!user
+          })
+        }
       })
     }
   })
