@@ -126,8 +126,8 @@ router.post('/configure/misc', auth.owner, function (req, res) {
         message: err.message
       })
     } else if (settings) {
-      settings.enableDeveloperCredit = requestedChanges.devCredit
-      settings.enableDeveloperGitHubInCredit = requestedChanges.devLink
+      settings.showDeveloperCredit = requestedChanges.devCredit
+      settings.developerGitHubLinkInCredit = requestedChanges.devLink
       settings.httpStatusCodeCats = requestedChanges.errorCats
 
       settings.save(function (err, saved) {

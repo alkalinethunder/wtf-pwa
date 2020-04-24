@@ -111,7 +111,7 @@
                   <v-list-item-title>Link to GitHub repository</v-list-item-title>
                   <v-list-item-subtitle>When the developer credit text is enabled, turn this on to add a link to the CMS's GitHub repository.</v-list-item-subtitle>
                 </v-list-item-content>
-                <v-switch v-model="settings.showDeveloperGitHubLinkInCredit" />
+                <v-switch v-model="settings.developerGitHubLinkInCredit" />
               </v-list-item>
               <v-list-item two-line>
                 <v-list-item-content>
@@ -153,8 +153,8 @@ export default {
     misc (evt) {
       evt.preventDefault()
       this.$axios.post('/api/setup/configure/misc', {
-        devCredit: this.settings.enableDeveloperCredit,
-        devLink: this.settings.enableDeveloperGitHubInCredit,
+        devCredit: this.settings.showDeveloperCredit,
+        devLink: this.settings.developerGitHubLinkInCredit,
         errorCats: this.settings.httpStatusCodeCats
       }).then((res) => {
         this.$store.commit('siteSettings/updateSiteSettings', res.data)

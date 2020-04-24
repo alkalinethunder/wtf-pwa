@@ -123,6 +123,13 @@
         <nuxt />
       </v-container>
     </v-content>
+
+    <v-footer app>
+      <span v-if="sitesettings.showDeveloperCredit">
+        Developed by Michael VanOverbeek.
+        <a v-if="sitesettings.developerGitHubLinkInCredit" href="https://github.com/alkalinethunder/wtf-pwa"> Source code</a>
+      </span>
+    </v-footer>
   </v-app>
 </template>
 
