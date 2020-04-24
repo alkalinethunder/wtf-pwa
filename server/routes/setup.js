@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const SiteSetting = require('../models/sitesetting')
-
+const auth = require('../middleware/auth')
 const User = require('../models/user')
 
 router.get('/configure', function (req, res) {
@@ -109,6 +109,40 @@ router.post('/configure', function (req, res) {
           message: 'Administrator account is required in admin field.'
         })
       }
+    }
+  })
+})
+
+router.post('/configure/misc', auth.owner, function (req, res) {
+  const requestedChanges = {
+    devCredit: !!req.body.devCredit,
+    devLink: !!req.body.devLink,
+    errorCats: !!req.body.errorCats
+  }
+
+  SiteSetting.findOne({}).exec(function (err, settings) {
+    if (err) {
+      res.status(500).json({
+        message: err.message
+      })
+    } else if (settings) {
+      settings.enableDeveloperCredit = requestedChanges.devCredit
+      settings.enableDeveloperGitHubInCredit = requestedChanges.devLink
+      settings.httpStatusCodeCats = requestedChanges.errorCats
+
+      settings.save(function (err, saved) {
+        if (err) {
+          res.status(500).json({
+            message: err.message
+          })
+        } else {
+          res.status(200).json(saved)
+        }
+      })
+    } else {
+      res.status(500).json({
+        message: 'Site settings were not found in the database.'
+      })
     }
   })
 })

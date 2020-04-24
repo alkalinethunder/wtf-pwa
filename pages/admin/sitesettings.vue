@@ -1,0 +1,169 @@
+<template>
+  <div>
+    <v-toolbar>
+      <v-toolbar-title>Site settings</v-toolbar-title>
+    </v-toolbar>
+
+    <v-row>
+      <v-col>
+        <v-form>
+          <v-card>
+            <v-card-title>Site name and description</v-card-title>
+
+            <v-card-text>
+              <v-text-field v-model="settings.name" label="Site name" />
+              <v-text-field v-model="settings.description" label="Site description" />
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer />
+              <v-btn text type="submit">
+                Update
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-form>
+      </v-col>
+      <v-col>
+        <v-form>
+          <v-card>
+            <v-card-title>Header social links</v-card-title>
+            <v-card-text>
+              <p>Display icon links to various social media profiles in the header bar. Fields that are left empty will not show in the header bar.</p>
+
+              <v-text-field v-model="settings.twitterProfile" label="Twitter">
+                <template slot="prepend-inner">
+                  <v-icon>mdi-twitter</v-icon>
+                </template>
+              </v-text-field>
+
+              <v-text-field v-model="settings.githubUsername" label="GitHub">
+                <template slot="prepend-inner">
+                  <v-icon>mdi-github</v-icon>
+                </template>
+              </v-text-field>
+
+              <v-text-field v-model="settings.subreddit" label="Subreddit">
+                <template slot="prepend-inner">
+                  <v-icon>mdi-reddit</v-icon>
+                </template>
+              </v-text-field>
+
+              <v-text-field v-model="settings.youtubeChannel" label="YouTube">
+                <template slot="prepend-inner">
+                  <v-icon>mdi-youtube</v-icon>
+                </template>
+              </v-text-field>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer />
+              <v-btn text type="submit">
+                Update
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-form>
+      </v-col>
+
+      <v-col>
+        <v-form>
+          <v-card>
+            <v-card-title>Security</v-card-title>
+            <v-card-text>
+              <p>These settings can affect the security of your website.</p>
+            </v-card-text>
+            <v-list>
+              <v-list-item two-line>
+                <v-list-item-content>
+                  <v-list-item-title>Request email verification at sign-up</v-list-item-title>
+                  <v-list-item-subtitle>If enabled, users will be sent an email on sign-up and required to click the link in the email to activate their account prior to logging in. This can help reduce the amount of spam accounts and bots.</v-list-item-subtitle>
+                </v-list-item-content>
+                <v-switch v-model="settings.requireEmailVerification" />
+              </v-list-item>
+            </v-list>
+
+            <v-card-actions>
+              <v-spacer />
+              <v-btn text type="submit">
+                Update
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-form>
+      </v-col>
+
+      <v-col>
+        <v-form @submit="misc">
+          <v-card>
+            <v-card-title>Miscellaneous settings</v-card-title>
+
+            <v-list>
+              <v-list-item two-line>
+                <v-list-item-content>
+                  <v-list-item-title>Developed by Alkaline Thunder</v-list-item-title>
+                  <v-list-item-subtitle>Add some text to the footer crediting the developer of this CMS.</v-list-item-subtitle>
+                </v-list-item-content>
+                <v-switch v-model="settings.showDeveloperCredit" />
+              </v-list-item>
+              <v-list-item two-line :disabled="!settings.showDeveloperCredit">
+                <v-list-item-content>
+                  <v-list-item-title>Link to GitHub repository</v-list-item-title>
+                  <v-list-item-subtitle>When the developer credit text is enabled, turn this on to add a link to the CMS's GitHub repository.</v-list-item-subtitle>
+                </v-list-item-content>
+                <v-switch v-model="settings.showDeveloperGitHubLinkInCredit" />
+              </v-list-item>
+              <v-list-item two-line>
+                <v-list-item-content>
+                  <v-list-item-title>Enable error cats</v-list-item-title>
+                  <v-list-item-subtitle>
+                    Add cat pictures courtesy of
+                    <a href="https://http.cat">http.cat</a>
+                    to all error pages on your website.
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+                <v-switch v-model="settings.httpStatusCodeCats" />
+              </v-list-item>
+            </v-list>
+
+            <v-card-actions>
+              <v-spacer />
+              <v-btn text type="submit">
+                Update
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-form>
+      </v-col>
+    </v-row>
+  </div>
+</template>
+
+<script>
+export default {
+  data () {
+    return {
+      settings: {}
+    }
+  },
+  mounted () {
+    this.settings = Object.assign({}, this.$store.state.siteSettings.settings)
+  },
+  methods: {
+    misc (evt) {
+      evt.preventDefault()
+      this.$axios.post('/api/setup/configure/misc', {
+        devCredit: this.settings.enableDeveloperCredit,
+        devLink: this.settings.enableDeveloperGitHubInCredit,
+        errorCats: this.settings.httpStatusCodeCats
+      }).then((res) => {
+        this.$store.commit('siteSettings/updateSiteSettings', res.data)
+      }).catch((err) => {
+        if (err) {
+          alert(err)
+        }
+      })
+    }
+  }
+}
+</script>
