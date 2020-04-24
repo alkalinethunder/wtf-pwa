@@ -4,6 +4,7 @@ const { Nuxt, Builder } = require('nuxt')
 const app = express()
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const SiteSetting = require('./models/sitesetting')
 
 require('dotenv').config()
 
@@ -11,7 +12,7 @@ require('dotenv').config()
 const config = require('../nuxt.config.js')
 config.dev = process.env.NODE_ENV !== 'production'
 
-async function start () {
+async function start (siteSettings) {
   // Init Nuxt.js
   const nuxt = new Nuxt(config)
 
@@ -51,5 +52,26 @@ async function start () {
   })
 }
 
+function ensureSiteSettingsExist () {
+  SiteSetting.findOne({}).exec(function (err, settings) {
+    if (settings) {
+      start(settings)
+    } else if (err) {
+      throw err
+    } else {
+      const newSettings = new SiteSetting({})
+      newSettings.save(function (err, saved) {
+        if (err) {
+          throw err
+        } else if (saved) {
+          start(saved)
+        } else {
+          throw new Error('Something went SERIOUSLY fucking wrong.')
+        }
+      })
+    }
+  })
+}
+
 mongoose.connect('mongodb://localhost/wtf')
-  .then(() => { start() });
+  .then(() => { ensureSiteSettingsExist() });
