@@ -13,7 +13,7 @@
       <v-content app>
         <v-container>
           <h1 class="white--text text-center display-1 text-uppercase login-top-pad">
-            Alkaline Thunder
+            {{ sitesettings.name }}
           </h1>
           <v-sheet>
             <v-container fluid>
@@ -31,6 +31,9 @@ export default {
   computed: {
     dark () {
       return this.$store.state.siteSettings.dark
+    },
+    sitesettings () {
+      return this.$store.state.siteSettings.settings
     }
   },
   watch: {
