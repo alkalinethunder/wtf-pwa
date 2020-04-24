@@ -12,7 +12,9 @@
       <v-card-subtitle>Created {{ getCreatedAt(post) }} - <strong>{{ categoryOf(post) }}</strong></v-card-subtitle>
 
       <v-card-text>
-        <p v-if="post.excerpt">{{ post.excerpt }}</p>
+        <p v-if="post.excerpt">
+          {{ post.excerpt }}
+        </p>
 
         <!-- eslint-disable vue/no-v-html -->
         <div v-html="$md.render(post.body)" />

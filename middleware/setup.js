@@ -3,6 +3,8 @@ export default async function (context) {
     try {
       const setupStatus = await context.app.$axios.get('/api/setup/configure')
 
+      context.store.commit('siteSettings/updateSiteSettings', setupStatus.data.settings)
+
       if (setupStatus.data.done) {
         if (context.route.path.startsWith('/setup') && context.route.path !== '/setup/done') {
           context.redirect('/setup/done')
