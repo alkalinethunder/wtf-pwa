@@ -9,8 +9,8 @@
       <v-list dense nav class="py-0">
         <v-list-item two-item class="px-0">
           <v-list-item-content>
-            <v-list-item-title>Administration</v-list-item-title>
-            <v-list-item-subtitle>Alkaline Thunder</v-list-item-subtitle>
+            <v-list-item-title>{{ sitesettings.name }}</v-list-item-title>
+            <v-list-item-subtitle>Administration</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
         <v-divider />
@@ -32,8 +32,8 @@
       <v-list v-if="!drawer" dense nav color="transparent">
         <v-list-item two-item>
           <v-list-item-content>
-            <v-list-item-title>Administration</v-list-item-title>
-            <v-list-item-subtitle>Alkaline Thunder</v-list-item-subtitle>
+            <v-list-item-title>{{ sitesettings.name }}</v-list-item-title>
+            <v-list-item-subtitle>Administration</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -88,6 +88,9 @@ export default {
   computed: {
     dark () {
       return this.$store.state.siteSettings.dark
+    },
+    sitesettings () {
+      return this.$store.state.siteSettings.settings
     }
   },
   watch: {
