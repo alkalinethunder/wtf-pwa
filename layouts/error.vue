@@ -9,7 +9,7 @@
         <p v-if="error.message" class="text-center">{{ error.message }}</p>
       </v-row>
       <v-row align="center" justify="center">
-        <p v-if="error.statusCode === 403" class="text-center secondary--text">I'm sorry, but I'm afraid I can't let you do that.</p>
+        <p v-if="error.statusCode === 403" class="text-center secondary--text">I'm sorry Dave, but I'm afraid I can't let you do that.</p>
         <p v-else class="text-center secondary--text">I do believe that this is, in fact, an error.</p>
       </v-row>
     </div>
