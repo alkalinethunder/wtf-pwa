@@ -75,7 +75,7 @@ router.post('/:slug/comments', auth.authenticate, function (req, res) {
           } else if (saved) {
             res.status(200).json({
               comment: saved,
-              author: req.user.toJSON()
+              author: req.user
             })
           } else {
             res.status(500).json({
