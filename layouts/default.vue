@@ -1,10 +1,10 @@
 <template>
   <v-app dark>
     <v-system-bar app color="primary" dark>
-      <a href="https://twitter.com/Desire2Leave" target="_blank">
+      <a v-if="twitter" :href="twitter" target="_blank">
         <v-icon>mdi-twitter</v-icon>
       </a>
-      <a href="https://github.com/alkalinethunder" target="_blank">
+      <a v-if="github" :href="github" target="_blank">
         <v-icon>mdi-github</v-icon>
       </a>
 
@@ -26,7 +26,7 @@
       shrink-on-scroll
       prominent
     >
-      <v-toolbar-title>Alkaline Thunder</v-toolbar-title>
+      <v-toolbar-title>{{ sitesettings.name }}</v-toolbar-title>
 
       <v-spacer />
 
@@ -131,6 +131,21 @@ export default {
   computed: {
     dark () {
       return this.$store.state.siteSettings.dark
+    },
+    sitesettings () {
+      return this.$store.state.siteSettings.settings
+    },
+    github () {
+      return this.sitesettings.githubProfile ? `https://github.com/${this.sitesettings.githubProfile}` : false
+    },
+    twitter () {
+      return this.sitesettings.twitterHandle ? `https://twitter.com/${this.sitesettings.twitterHandle}` : false
+    },
+    reddit () {
+      return this.sitesettings.subreddit ? `https://reddit.com/r/${this.sitesettings.subreddit}` : false
+    },
+    youtube () {
+      return false // TODO: YouTube is complicated since vanity links are a thing.
     },
     userLetter () {
       const username = this.$auth.user.username
