@@ -1,11 +1,17 @@
 <template>
   <v-app dark>
     <v-system-bar app color="primary" dark>
-      <a v-if="twitter" :href="twitter" target="_blank">
-        <v-icon>mdi-twitter</v-icon>
+      <a v-if="sitesettings.youtubeChannel" :href="sitesettings.youtubeChannel">
+        <v-icon small>mdi-youtube</v-icon>
       </a>
-      <a v-if="github" :href="github" target="_blank">
-        <v-icon>mdi-github</v-icon>
+      <a v-if="sitesettings.twitterHandle" :href="sitesettings.twitterHandle">
+        <v-icon small>mdi-twitter</v-icon>
+      </a>
+      <a v-if="sitesettings.githubProfile" :href="sitesettings.githubProfile">
+        <v-icon small>mdi-githubProfile</v-icon>
+      </a>
+      <a v-if="sitesettings.subreddit" :href="sitesettings.subreddit">
+        <v-icon small>mdi-reddit</v-icon>
       </a>
 
       <v-spacer />
@@ -141,18 +147,6 @@ export default {
     },
     sitesettings () {
       return this.$store.state.siteSettings.settings
-    },
-    github () {
-      return this.sitesettings.githubProfile ? `https://github.com/${this.sitesettings.githubProfile}` : false
-    },
-    twitter () {
-      return this.sitesettings.twitterHandle ? `https://twitter.com/${this.sitesettings.twitterHandle}` : false
-    },
-    reddit () {
-      return this.sitesettings.subreddit ? `https://reddit.com/r/${this.sitesettings.subreddit}` : false
-    },
-    youtube () {
-      return false // TODO: YouTube is complicated since vanity links are a thing.
     },
     userLetter () {
       const username = this.$auth.user.username

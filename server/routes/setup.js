@@ -113,6 +113,55 @@ router.post('/configure', function (req, res) {
   })
 })
 
+router.post('/configure/socials', auth.owner, function (req, res) {
+  const { twitter, youtube, reddit, github } = req.body
+
+  if (twitter && twitter.length > 15) {
+    res.status(400).json({
+      message: 'Twitter username is too long.'
+    })
+  } else if (twitter && !twitter.match(/^[A-z0-9_]+$/i)) {
+    res.status(400).json({
+      message: 'Twitter username contains invalid characters.'
+    })
+  } else if (youtube && !youtube.match(/^youtube\.com\/(user|channel)\/([A-z0-9\-_]+$)/)) {
+    res.status(400).json({
+      message: 'YouTube channel URL is not valid.'
+    })
+  } else if (reddit && !reddit.match(/^[A-z0-9\-_]+$/i)) {
+    res.status(400).json({
+      message: 'Subreddit name is not valid.'
+    })
+  } else if (github && !github.match(/^[A-z0-9\-_]+$/i)) {
+    res.status(400).json({
+      message: 'GitHub username is not valid.'
+    })
+  } else {
+    SiteSetting.findOne({}).exec(function (err, settings) {
+      if (err) {
+        res.status(500).json({
+          message: err.message
+        })
+      } else if (settings) {
+        settings.twitterHandle = twitter ? `https://twitter.com/${twitter}` : null
+        settings.youtubeChannel = youtube ? `https://www.${youtube}` : null
+        settings.subreddit = reddit ? `https://reddit.com/r/${reddit}` : null
+        settings.githubProfile = github ? `https://github.com/${github}` : null
+
+        settings.save(function (err, saved) {
+          if (err) {
+            res.status(500).json({
+              message: err.message
+            })
+          } else if (saved) {
+            res.status(200).json(saved)
+          }
+        })
+      }
+    })
+  }
+})
+
 router.post('/configure/sitename', auth.owner, function (req, res) {
   const requestedChanges = {
     name: req.body.name && req.body.name.trim(),

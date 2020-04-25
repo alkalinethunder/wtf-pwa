@@ -25,31 +25,31 @@
         </v-form>
       </v-col>
       <v-col>
-        <v-form>
+        <v-form @submit="updateSocials">
           <v-card>
             <v-card-title>Header social links</v-card-title>
             <v-card-text>
               <p>Display icon links to various social media profiles in the header bar. Fields that are left empty will not show in the header bar.</p>
 
-              <v-text-field v-model="settings.twitterProfile" label="Twitter">
+              <v-text-field v-model="settings.twitterProfile" label="Twitter" :rules="rules.twitter">
                 <template slot="prepend-inner">
                   <v-icon>mdi-twitter</v-icon>
                 </template>
               </v-text-field>
 
-              <v-text-field v-model="settings.githubUsername" label="GitHub">
+              <v-text-field v-model="settings.githubUsername" label="GitHub" :rules="rules.github">
                 <template slot="prepend-inner">
                   <v-icon>mdi-github</v-icon>
                 </template>
               </v-text-field>
 
-              <v-text-field v-model="settings.subreddit" label="Subreddit">
+              <v-text-field v-model="settings.subreddit" label="Subreddit" :rules="rules.reddit">
                 <template slot="prepend-inner">
                   <v-icon>mdi-reddit</v-icon>
                 </template>
               </v-text-field>
 
-              <v-text-field v-model="settings.youtubeChannel" label="YouTube">
+              <v-text-field v-model="settings.youtubeChannel" label="YouTube" :rules="rules.youtube">
                 <template slot="prepend-inner">
                   <v-icon>mdi-youtube</v-icon>
                 </template>
@@ -143,7 +143,22 @@
 export default {
   data () {
     return {
-      settings: {}
+      settings: {},
+      rules: {
+        twitter: [
+          v => v && v.length > 15 ? 'Twitter usernames cannot be greater than 15 characters.' : true,
+          v => v && !v.match(/^[A-z0-9_]+$/i) ? 'That username contains invalid characters.' : true
+        ],
+        youtube: [
+          v => v && !v.match(/^youtube\.com\/(user|channel)\/([A-z0-9\-_]+$)/) ? "That's not a valid YouTube channel URL." : true
+        ],
+        github: [
+          v => v && !v.match(/^[A-z0-9\-_]+$/i) ? 'Username contains invalid characters.' : true
+        ],
+        reddit: [
+          v => v && !v.match(/^[A-z0-9\-_]+$/i) ? 'Username contains invalid characters.' : true
+        ]
+      }
     }
   },
   mounted () {
@@ -173,6 +188,21 @@ export default {
       }
 
       this.$axios.post('/api/setup/configure/sitename', changes)
+        .then((res) => {
+          this.$store.commit('siteSettings/updateSiteSettings', res.data)
+        })
+    },
+    updateSocials (evt) {
+      evt.preventDefault()
+
+      const changes = {
+        twitter: this.settings.twitterHandle,
+        reddit: this.settings.subreddit,
+        github: this.settings.githubProfile,
+        youtube: this.settings.youtubeChannel
+      }
+
+      this.$axios.post('/api/setup/configure/socials', changes)
         .then((res) => {
           this.$store.commit('siteSettings/updateSiteSettings', res.data)
         })
