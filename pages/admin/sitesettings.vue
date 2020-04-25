@@ -6,7 +6,7 @@
 
     <v-row>
       <v-col>
-        <v-form>
+        <v-form @submit="updateName">
           <v-card>
             <v-card-title>Site name and description</v-card-title>
 
@@ -163,6 +163,19 @@ export default {
           alert(err)
         }
       })
+    },
+    updateName (evt) {
+      evt.preventDefault()
+
+      const changes = {
+        name: this.settings.name,
+        description: this.settings.description
+      }
+
+      this.$axios.post('/api/setup/configure/sitename', changes)
+        .then((res) => {
+          this.$store.commit('siteSettings/updateSiteSettings', res.data)
+        })
     }
   }
 }

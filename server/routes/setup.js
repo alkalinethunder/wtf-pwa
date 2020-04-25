@@ -113,6 +113,48 @@ router.post('/configure', function (req, res) {
   })
 })
 
+router.post('/configure/sitename', auth.owner, function (req, res) {
+  const requestedChanges = {
+    name: req.body.name && req.body.name.trim(),
+    description: req.body.description && req.body.description.trim()
+  }
+
+  if (!requestedChanges.name) {
+    res.status(400).json({
+      message: 'A site name is required.'
+    })
+  } else if (!requestedChanges.description) {
+    res.status(400).json({
+      message: 'A site description is required.'
+    })
+  } else {
+    SiteSetting.findOne({}).exec(function (err, settings) {
+      if (err) {
+        res.status(500).json({
+          message: err.message
+        })
+      } else if (settings) {
+        settings.name = requestedChanges.name
+        settings.description = requestedChanges.description
+
+        settings.save(function (err, saved) {
+          if (err) {
+            res.status(500).json({
+              message: err.message
+            })
+          } else if (saved) {
+            res.status(200).json(saved)
+          }
+        })
+      } else {
+        res.status(500).json({
+          message: 'Site settings could not be found.'
+        })
+      }
+    })
+  }
+})
+
 router.post('/configure/misc', auth.owner, function (req, res) {
   const requestedChanges = {
     devCredit: !!req.body.devCredit,
