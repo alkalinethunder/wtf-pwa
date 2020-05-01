@@ -48,10 +48,6 @@ export default {
         }
       })
 
-      alert(JSON.stringify(result))
-      alert(this.$auth.loggedIn)
-      alert(JSON.stringify(this.$auth.user))
-
       if (result) {
         this.$router.push('/')
       }
