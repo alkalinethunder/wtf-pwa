@@ -8,9 +8,10 @@
         <v-form v-model="valid" @submit="submitPost">
           <v-text-field v-model="post.name" label="Post title" />
           <v-textarea v-model="post.excerpt" label="Excerpt" />
-          <v-textarea v-model="post.body" label="Post content" />
 
-          <v-text-field v-model="tags" label="Tags" />
+          <Editor v-model="post.body" mode="editor" />
+
+          <v-text-field v-model="post.tags" label="Tags" />
           <p><small>Seperate tags with commas.</small></p>
 
           <v-btn type="submit" color="primary">
@@ -24,8 +25,7 @@
         </h2>
         <p>{{ post.excerpt || 'This is the excerpt for the post and will show on the blog and homepage.  If nothing is written here, no excerpt will be shown.' }}</p>
 
-        <!-- eslint-disable vue/no-v-html -->
-        <div v-html="$md.render(post.body)" />
+        <wtf-renderer v-model="post.body" />
       </v-col>
     </v-row>
   </div>

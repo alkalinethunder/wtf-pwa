@@ -1,157 +1,132 @@
 <template>
-  <v-app dark>
-    <v-system-bar app color="primary" dark>
-      <a v-if="sitesettings.youtubeChannel" :href="sitesettings.youtubeChannel">
-        <v-icon small>mdi-youtube</v-icon>
-      </a>
-      <a v-if="sitesettings.twitterHandle" :href="sitesettings.twitterHandle">
-        <v-icon small>mdi-twitter</v-icon>
-      </a>
-      <a v-if="sitesettings.githubProfile" :href="sitesettings.githubProfile">
-        <v-icon small>mdi-githubProfile</v-icon>
-      </a>
-      <a v-if="sitesettings.subreddit" :href="sitesettings.subreddit">
-        <v-icon small>mdi-reddit</v-icon>
-      </a>
-
-      <v-spacer />
-
-      <nuxt-link v-if="$auth.loggedIn && ($auth.user.owner || $auth.user.admin)" small icon to="/admin">
-        <v-icon>mdi-cog</v-icon>
-      </nuxt-link>
-
-      <v-icon @click="toggleDarkMode()">
-        mdi-invert-colors
-      </v-icon>
-    </v-system-bar>
-    <v-app-bar
-      extended
-      app
+  <v-app color="primary">
+    <v-navigation-drawer
+      v-model="drawer"
+      temporary
+      :color="themeBackground"
+      width="100%"
       dark
-      color="primary"
-      shrink-on-scroll
-      prominent
+      app
+      class="d-sm-none"
     >
-      <v-toolbar-title>{{ sitesettings.name }}</v-toolbar-title>
+      <v-list-item>
+        <v-app-bar-nav-icon @click="drawer = !drawer" />
+        <v-list-item-content>
+          <v-list-item-title>
+            {{ settings.name }}
+          </v-list-item-title>
+        </v-list-item-content>
 
-      <v-spacer />
+        <wtf-socials small />
+      </v-list-item>
 
-      <template slot="extension">
-        <v-tabs dark color="white">
-          <v-tab to="/">
-            Home
-          </v-tab>
-          <v-tab to="/blog">
-            Blog
-          </v-tab>
-          <v-tab to="/projects">
-            Projects
-          </v-tab>
-        </v-tabs>
+      <v-divider />
 
-        <v-spacer />
+      <wtf-drawer-navigation />
 
-        <v-tabs
-          v-if="$auth.loggedIn"
-          dark
-          color="white"
-          right
-          hide-slider
-          icons-and-text
-        >
-          <v-menu offset-y>
-            <template v-slot:activator="{ on }">
-              <v-tab v-on="on">
-                User menu
-              </v-tab>
-            </template>
-            <v-list dense class="py-0">
-              <v-list-item :two-line="$auth.user.displayName">
-                <v-list-item-avatar color="primary">
-                  <v-img v-if="$auth.user.avatar" :src="$auth.user.avatar" />
-                  <span v-else class="display-1">{{ userLetter }}</span>
-                </v-list-item-avatar>
-                <v-list-item-content>
-                  <v-list-item-title>{{ $auth.user.username }}</v-list-item-title>
-                  <v-list-item-subtitle v-if="$auth.user.displayName">
-                    {{ $auth.user.displayName }}
-                  </v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
-
-              <v-divider />
-              <v-subheader>ACCOUNT</v-subheader>
-
-              <v-list-item to="/auth/user">
-                <v-list-item-icon>
-                  <v-icon>mdi-cog</v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title>Account Settings</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-
-              <v-list-item :to="`/u/${$auth.user.username}`">
-                <v-list-item-content>
-                  <v-list-item-title>My Profile</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-
-              <v-subheader>ACTIONS</v-subheader>
-              <v-list-item to="/auth/logout">
-                <v-list-item-content>
-                  <v-list-item-title>Log out</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-        </v-tabs>
-        <v-tabs
-          v-else
-          dark
-          color="white"
-          right
-          hide-slider
-          icons-and-text
-        >
-          <v-tab to="/auth/login">
-            Log in
-          </v-tab>
-          <v-tab to="/auth/register">
-            Create account
-          </v-tab>
-        </v-tabs>
+      <template slot="append">
+        <wtf-drawer-user-menu />
       </template>
+    </v-navigation-drawer>
+
+    <v-app-bar
+      fixed
+      :color="themeBackground"
+      dark
+      flat
+      class="d-xs-block d-sm-none"
+    >
+      <v-app-bar-nav-icon @click="drawer = !drawer" />
+      <v-toolbar-title>{{ settings.name }}</v-toolbar-title>
     </v-app-bar>
 
-    <v-content app>
+    <v-app-bar
+      class="d-none d-md-block"
+      app
+      inverted-scroll
+      :color="themeBackground"
+      dark
+    >
+      <v-toolbar-title>{{ settings.name }}</v-toolbar-title>
+      <wtf-navigation />
+      <v-spacer />
+      <wtf-socials />
+      <wtf-user-menu />
+    </v-app-bar>
+    <v-content :class="themeBackground">
+      <v-spacer class="mt-12 d-xs-block" />
       <v-container>
-        <nuxt />
+        <v-app-bar
+          flat
+          color="transparent"
+          extended
+          prominent
+          dark
+          class="d-none d-sm-block"
+        >
+          <v-toolbar-title class="display-3">
+            {{ settings.name }}
+          </v-toolbar-title>
+
+          <v-spacer />
+
+          <wtf-socials />
+
+          <template slot="extension">
+            <wtf-navigation />
+            <v-spacer />
+            <wtf-user-menu />
+          </template>
+        </v-app-bar>
+
+        <v-card>
+          <nuxt />
+        </v-card>
       </v-container>
     </v-content>
 
-    <v-footer app>
-      <span v-if="sitesettings.showDeveloperCredit">
+    <v-footer app :dark="dark">
+      <span v-if="settings.showDeveloperCredit">
         Developed by Michael VanOverbeek.
-        <a v-if="sitesettings.developerGitHubLinkInCredit" href="https://github.com/alkalinethunder/wtf-pwa"> Source code</a>
+        <a v-if="settings.developerGitHubLinkInCredit" href="https://github.com/alkalinethunder/wtf-pwa">
+          Source code
+        </a>
       </span>
+      <v-spacer />
+      <v-btn
+        v-if="$auth.loggedIn && ($auth.user.owner || $auth.user.admin)"
+        small
+        text
+        to="/admin"
+      >
+        <v-icon>
+          mdi-cog
+        </v-icon>
+        Administrate
+      </v-btn>
+      <v-btn icon small @click="toggleDarkMode">
+        <v-icon>mdi-invert-colors</v-icon>
+      </v-btn>
     </v-footer>
   </v-app>
 </template>
 
 <script>
 export default {
+  data () {
+    return {
+      drawer: false
+    }
+  },
   computed: {
-    dark () {
-      return this.$store.state.siteSettings.dark
+    themeBackground () {
+      return this.dark ? '' : 'primary'
     },
-    sitesettings () {
+    settings () {
       return this.$store.state.siteSettings.settings
     },
-    userLetter () {
-      const username = this.$auth.user.username
-      const letter = username.slice(0, 1)
-      return letter.toUpperCase()
+    dark () {
+      return this.$store.state.siteSettings.dark
     }
   },
   watch: {

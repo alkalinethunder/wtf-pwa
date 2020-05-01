@@ -72,7 +72,8 @@ module.exports = {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    { src: '~/plugins/localStorage.js', ssr: false }
+    { src: '~/plugins/localStorage.js', ssr: false },
+    { src: '~/plugins/markdown.js', ssr: false }
   ],
   /*
   ** Nuxt.js dev-modules
@@ -109,17 +110,17 @@ module.exports = {
   ** https://github.com/nuxt-community/vuetify-module
   */
   vuetify: {
-    treeShake: true,
+    treeShake: false,
     customVariables: ['~/assets/variables.scss'],
     theme: {
       dark: false,
       themes: {
         light: {
-          primary: colors.blue,
-          accent: colors.grey,
-          secondary: colors.amber,
-          info: colors.teal,
-          warning: colors.amber,
+          primary: colors.blue.darken2,
+          accent: colors.grey.lighten1,
+          secondary: colors.amber.darken1,
+          info: colors.teal.darken1,
+          warning: colors.amber.darken1,
           error: colors.deepOrange.accent4,
           success: colors.green.accent3
         },
