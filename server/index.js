@@ -23,6 +23,7 @@ async function start (siteSettings) {
   const setupRouter = require('./routes/setup')
   const usersRoute = require('./routes/users')
   const authRoute = require('./routes/auth')
+  const PagesRouter = require('./routes/pages')
 
   await nuxt.ready()
   // Build only in dev mode
@@ -40,6 +41,7 @@ async function start (siteSettings) {
   app.use('/api/projects', projectsRoute);
   app.use('/api/users', usersRoute);
   app.use('/api/auth', authRoute)
+  app.use('/api/pages', PagesRouter)
 
   // Give nuxt middle`ware to express
   app.use(nuxt.render)
@@ -73,5 +75,30 @@ function ensureSiteSettingsExist () {
   })
 }
 
+function createHomePage() {
+  const Page = require('./models/page')
+
+  Page.findOne({ slug: '<index>' }).exec(function (err, page) {
+    if (err) {
+      throw err
+    } else if (!page) {
+      const newHome = new Page({
+        name: 'Home',
+        slug: '<index>',
+        created: new Date(),
+        edited: new Date(),
+        body: 'Edit this page using **Administration.**'
+      })
+
+      newHome.save(function (err, saved) {
+        if (err) {
+          throw err
+        }
+      })
+    }
+  })
+}
+
 mongoose.connect('mongodb://localhost/wtf')
+  .then(() => { createHomePage() })
   .then(() => { ensureSiteSettingsExist() });
