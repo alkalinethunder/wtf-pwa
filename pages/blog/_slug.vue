@@ -5,7 +5,7 @@
         cols="12"
         md="8"
       >
-        <v-card-title>{{ post.name }}</v-card-title>
+        <v-card-title class="display-1">{{ post.name }}</v-card-title>
         <v-card-subtitle>Posted {{ getCreatedAt(post) }}.</v-card-subtitle>
 
         <v-img v-if="post.featuredUrl" :src="post.featuredUrl" />
