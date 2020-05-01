@@ -104,9 +104,7 @@
         </v-icon>
         Administrate
       </v-btn>
-      <v-btn icon small @click="toggleDarkMode">
-        <v-icon>mdi-invert-colors</v-icon>
-      </v-btn>
+      <wtf-dark-mode-toggle small />
     </v-footer>
   </v-app>
 </template>
@@ -136,11 +134,6 @@ export default {
   },
   mounted () {
     this.$vuetify.theme.dark = this.dark
-  },
-  methods: {
-    toggleDarkMode () {
-      this.$store.commit('siteSettings/toggleDarkMode')
-    }
   }
 }
 </script>

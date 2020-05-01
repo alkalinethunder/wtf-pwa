@@ -1,15 +1,18 @@
 <template>
   <div>
-    <v-toolbar>
-      <v-toolbar-title>Posts</v-toolbar-title>
-      <v-spacer />
-
-      <v-btn icon to="/admin/create-post">
-        <v-icon>mdi-plus</v-icon>
-      </v-btn>
-    </v-toolbar>
+    <v-card-title class="display-1">
+      Posts
+    </v-card-title>
+    <v-card-subtitle>
+      Posts are part of the built-in blog system.  They are visible on the home page and the Blog page, and can contain both an excerpt and a full Markdown body.  Post pages display differently from static pages, allowing for user comments and the ability to show related posts.  Posts can also be shared to social media platforms by users.
+    </v-card-subtitle>
 
     <v-list>
+      <v-list-item>
+        <v-list-item-content>
+          <v-subheader>POST</v-subheader>
+        </v-list-item-content>
+      </v-list-item>
       <v-list-item v-for="post in posts" :key="post._id">
         <v-list-item-icon>
           <v-icon>mdi-book</v-icon>
@@ -39,7 +42,7 @@
             </v-list-item>
 
             <v-list-item @click="showDeleteDialog(post)">
-              <v-list-item-content>
+              <v-list-item-content>\
                 <v-list-item-title>Delete</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
@@ -47,6 +50,14 @@
         </v-menu>
       </v-list-item>
     </v-list>
+
+    <v-card-text v-if="!posts.length" class="text-center">
+      <h1 class="headline">No posts here...</h1>
+      <p>There are no posts to display on this page. Your blog is empty.</p>
+      <v-btn color="primary" to="/admin/create-post">
+        Create your first post!
+      </v-btn>
+    </v-card-text>
 
     <v-dialog v-model="deleteOpen">
       <v-card v-if="more">
@@ -90,6 +101,17 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-btn
+      to="/admin/create-post"
+      color="primary"
+      fab
+      fixed
+      bottom
+      right
+    >
+      <v-icon>mdi-plus</v-icon>
+    </v-btn>
   </div>
 </template>
 

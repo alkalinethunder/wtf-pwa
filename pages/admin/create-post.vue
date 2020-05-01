@@ -1,31 +1,60 @@
 <template>
   <div>
-    <v-toolbar>
-      <v-toolbar-title>Create post</v-toolbar-title>
-    </v-toolbar>
+    <v-card-title class="display-1">
+      Create new post
+    </v-card-title>
+    <v-card-subtitle class="d-none d-md-block">
+      Good blog posts have a post title, excerpt, featured image and a nicely formatted body.  You can fill out the form below to create your post.  A preview of what users will see is displayed on the right and will update as you type.
+    </v-card-subtitle>
+    <v-card-subtitle class="d-block d-md-none">
+      Good blog posts have a post title, excerpt, featured image, and nicely formatted body.  Use the form below to create your post.  Scroll further down to see a preview of what your users will see.
+    </v-card-subtitle>
     <v-row>
-      <v-col>
+      <v-col
+        cols="12"
+        md="6"
+      >
         <v-form v-model="valid" @submit="submitPost">
-          <v-text-field v-model="post.name" label="Post title" />
-          <v-textarea v-model="post.excerpt" label="Excerpt" />
+          <v-card-text>
+            <v-text-field v-model="post.name" dense label="Post title" />
+            <v-text-field v-model="post.excerpt" dense label="Excerpt" />
+          </v-card-text>
 
           <Editor v-model="post.body" mode="editor" />
 
-          <v-text-field v-model="post.tags" label="Tags" />
-          <p><small>Seperate tags with commas.</small></p>
-
-          <v-btn type="submit" color="primary">
-            Publish
+          <v-btn
+            fab
+            fixed
+            bottom
+            right
+            type="submit"
+            color="primary"
+          >
+            <v-icon>mdi-send</v-icon>
           </v-btn>
         </v-form>
       </v-col>
-      <v-col>
-        <h2 class="headline">
-          {{ post.name || 'Untitled post' }}
-        </h2>
-        <p>{{ post.excerpt || 'This is the excerpt for the post and will show on the blog and homepage.  If nothing is written here, no excerpt will be shown.' }}</p>
+      <v-col
+        cols="12"
+        md="6"
+      >
+        <v-card
+          raised
+          outline
+        >
+          <v-card-subtitle>PREVIEW</v-card-subtitle>
+          <v-card-title class="display-1">
+            {{ post.name || 'Untitled post' }}
+          </v-card-title>
 
-        <wtf-renderer v-model="post.body" />
+          <v-card-text v-if="post.excerpt">
+            {{ post.excerpt }}
+          </v-card-text>
+
+          <v-card-text>
+            <wtf-renderer v-model="post.body" />
+          </v-card-text>
+        </v-card>
       </v-col>
     </v-row>
   </div>

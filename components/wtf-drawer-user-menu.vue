@@ -3,12 +3,21 @@
     <v-list-item v-if="$auth.loggedIn" two-line>
       <v-list-item-content>
         <v-list-item-title>{{ displayname }}</v-list-item-title>
-        <v-list-item-subtitle>Logged in.</v-list-item-subtitle>
+        <v-list-item-subtitle v-if="admin">
+          Administrating
+        </v-list-item-subtitle>
+        <v-list-item-subtitle v-else>
+          Logged in
+        </v-list-item-subtitle>
       </v-list-item-content>
 
-      <v-btn icon to="/auth/logout">
+      <v-btn v-if="admin" icon to='/' exact>
         <v-icon>mdi-exit-to-app</v-icon>
       </v-btn>
+      <v-btn v-else icon to="/auth/logout">
+        <v-icon>mdi-exit-to-app</v-icon>
+      </v-btn>
+      <wtf-dark-mode-toggle />
     </v-list-item>
     <v-list-item v-else>
       <v-list-item-content>
@@ -21,12 +30,19 @@
       <v-btn icon to="/auth/register">
         <v-icon>mdi-account-plus</v-icon>
       </v-btn>
+      <wtf-dark-mode-toggle />
     </v-list-item>
   </div>
 </template>
 
 <script>
 export default {
+  props: {
+    admin: {
+      type: Boolean,
+      value: false
+    }
+  },
   computed: {
     displayname () {
       return this.$auth.user.displayName || this.$auth.user.username
