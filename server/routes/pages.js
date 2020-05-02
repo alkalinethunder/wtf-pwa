@@ -5,11 +5,74 @@ const auth = require('../middleware/auth')
 
 const reservedNames = [
   'index',
-  'home',
   '<index>',
   'delete',
+  'id',
   'edit'
 ]
+
+router.get('/id/:id', function (req, res) {
+  Page.findById(req.params.id).exec(function (err, page) {
+    if (err) {
+      res.status(500).json({
+        message: err.message
+      })
+    } else if (page) {
+      res.status(200).json(page)
+    } else {
+      res.status(404).json({
+        message: 'Pasge not found.'
+      })
+    }
+  })
+})
+
+router.post('/id/:id', auth.owner, function (req, res) {
+  const { name, body } = req.body
+  const trimmedName = name && name.trim()
+
+  if (trimmedName) {
+    if(reservedNames.includes(trimmedName.toLowerCase())) {
+      res.status(400).json({
+        message: 'That page name is reserved by the API for special use cases.'
+      })
+    } else {
+      Page.findById(req.params.id).exec(function (err, page) {
+        if (err) {
+          res.status(500).json({
+            message: err.message
+          })
+        } else if (page) {
+          if (page.name !== trimmedName) {
+            res.status(400).json({
+              message: 'Page renaming is not yet implemented.'
+            })
+          } else {
+            page.body = (body && body.trim()) || ''
+            page.edited = new Date()
+            page.save(function (err, saved) {
+              if (err) {
+                res.status(500).json({
+                  message: err.message
+                })
+              } else if (saved) {
+                res.status(200).json(saved)
+              }
+            })
+          }
+        } else {
+          res.status(404).json({
+            message: 'Page not found.'
+          })
+        }
+      })
+    }
+  } else {
+    res.status(400).json({
+      message: 'Page name is required.'
+    })
+  }
+})
 
 const Page = require('../models/page')
 

@@ -24,9 +24,9 @@
       </template>
     </v-navigation-drawer>
 
-    <v-content class="fill-height">
-      <v-container fluid class="fill-height">
-        <v-card raised class="fill-height">
+    <v-content>
+      <v-container fluid>
+        <v-card color="transparent">
           <nuxt />
         </v-card>
       </v-container>

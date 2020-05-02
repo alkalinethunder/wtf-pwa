@@ -16,3 +16,5 @@ Vue.component('wtf-comments', () => import('~/components/wtf-comments.vue'))
 Vue.component('wtf-admin-navigation', () => import('~/components/wtf-admin-navigation.vue'))
 
 Vue.component('wtf-dark-mode-toggle', () => import('~/components/wtf-dark-mode-toggle.vue'))
+
+Vue.component('wtf-page-editor', () => import('~/components/wtf-page-editor.vue'))
