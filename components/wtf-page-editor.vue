@@ -5,10 +5,8 @@
         cols="12"
         md="6"
       >
-        <v-card-text>
-          <v-form>
-            <v-text-field v-model="value.name" label="Page title" />
-          </v-form>
+        <v-card-text v-if="!quick">
+          <v-text-field v-model="value.name" label="Page title" />
         </v-card-text>
 
         <Editor v-model="value.body" mode="editor" />
@@ -59,6 +57,10 @@ export default {
       type: Boolean,
       default: false
     },
+    quick: {
+      type: Boolean,
+      default: false
+    },
     value: {
       type: Object,
       default () {
@@ -78,7 +80,7 @@ export default {
       evt.preventDefault()
       this.$axios.post(`/api/pages/id/${this.value._id}`, this.value)
         .then((res) => {
-          this.$router.replace('/admin/pages')
+          this.$emit('saved', res.data)
         })
     }
   }

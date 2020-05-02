@@ -1,12 +1,6 @@
 <template>
   <div>
-    <v-card-title class="display-1">{{ page.name }}</v-card-title>
-
-    <v-card-subtitle>Created {{ created }} - Last edited {{ lastEdited }}</v-card-subtitle>
-
-    <v-card-text>
-      <wtf-renderer v-model="page.body" />
-    </v-card-text>
+    <wtf-page-viewer v-model="page" />
   </div>
 </template>
 
