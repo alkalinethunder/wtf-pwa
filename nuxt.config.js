@@ -73,6 +73,7 @@ module.exports = {
   */
   plugins: [
     { src: '~/plugins/localStorage.js', ssr: false },
+    { src: '~/plugins/wtf-core.js', ssr: false },
     { src: '~/plugins/markdown.js', ssr: false }
   ],
   /*
