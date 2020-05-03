@@ -16,7 +16,7 @@ export default {
     }
   },
   mounted () {
-    this.$axios.get(`/api/pages/id/${this.$route.params.id}`)
+    this.$axios.get(`/api/pages/${this.$route.params.id}`)
       .then((res) => {
         this.page = res.data
       })

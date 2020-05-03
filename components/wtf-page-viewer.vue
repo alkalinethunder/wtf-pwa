@@ -4,6 +4,8 @@
       {{ value.name }}
     </v-card-title>
 
+    <v-breadcrumbs :items="breadcrumbs" />
+
     <v-card-text>
       <wtf-renderer v-model="value.body" />
     </v-card-text>
@@ -60,6 +62,10 @@ export default {
           edited: new Date()
         }
       }
+    },
+    breadcrumbs: {
+      type: Array,
+      default: () => []
     }
   },
   data () {

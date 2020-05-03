@@ -8,7 +8,7 @@ const PageSchema = new Schema({
   body: String,
   created: { type: Date, required: true },
   edited: { type: Date, required: true },
-  parent: { type: Schema.Types.ObjectId, ref: 'page', required: false }
+  parent: { type: Schema.Types.ObjectId, ref: 'page', required: false, default: null }
 })
 
 module.exports = mongoose.model('page', PageSchema)

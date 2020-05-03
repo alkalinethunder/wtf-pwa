@@ -15,3 +15,5 @@ Vue.component('wtf-dark-mode-toggle', () => import('~/components/wtf-dark-mode-t
 
 Vue.component('wtf-page-editor', () => import('~/components/wtf-page-editor.vue'))
 Vue.component('wtf-page-viewer', () => import('~/components/wtf-page-viewer.vue'))
+
+Vue.component('wtf-recursive-pages-list', () => import('~/components/wtf-recursive-pages-list.vue'))
