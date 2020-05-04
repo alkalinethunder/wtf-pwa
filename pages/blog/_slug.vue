@@ -62,7 +62,11 @@ export default {
         this.post = res.data
         this.$axios.get(`/api/posts/${this.post.slug}/comments`)
           .then((res) => {
-            this.comments = res.data
+            this.comments = res.data.sort((a, b) => {
+              const aDate = Date.parse(a.posted)
+              const bDate = Date.parse(b.posted)
+              return bDate - aDate
+            })
           })
       })
       .catch((err) => {
