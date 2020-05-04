@@ -1,20 +1,18 @@
 <template>
-  <v-card>
-    <v-list-item>
-      <v-list-item-avatar color="primary" />
-      <v-list-item-content>
-        <v-list-item-title>
-          {{ displayname }}
-        </v-list-item-title>
-        <v-list-item-subtitle>
-          {{ comment.body }}
-        </v-list-item-subtitle>
-        <v-list-item-subtitle>
-          <small>{{ timeAgo }}</small>
-        </v-list-item-subtitle>
-      </v-list-item-content>
-    </v-list-item>
-  </v-card>
+  <v-list-item>
+    <v-list-item-avatar color="primary" />
+    <v-list-item-content>
+      <v-list-item-title>
+        {{ displayname }}
+      </v-list-item-title>
+      <v-list-item-subtitle>
+        {{ comment.body }}
+      </v-list-item-subtitle>
+      <v-list-item-subtitle>
+        <small>{{ timeAgo }}</small>
+      </v-list-item-subtitle>
+    </v-list-item-content>
+  </v-list-item>
 </template>
 
 <script>

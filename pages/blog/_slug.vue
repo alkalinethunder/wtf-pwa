@@ -1,26 +1,32 @@
 <template>
   <div v-if="post">
+    <h1 class="headline">
+      {{ post.name }}
+    </h1>
+    <h2 class="subtitle-2 text--secondary">
+      Posted {{ getCreatedAt(post) }}.
+    </h2>
+
     <v-row>
       <v-col
         cols="12"
         md="8"
       >
-        <v-card-title class="display-1">{{ post.name }}</v-card-title>
-        <v-card-subtitle>Posted {{ getCreatedAt(post) }}.</v-card-subtitle>
-
         <v-img v-if="post.featuredUrl" :src="post.featuredUrl" />
 
-        <v-card-text v-if="post.excerpt">
+        <p v-if="post.excerpt" class="body-2">
           {{ post.excerpt }}
-        </v-card-text>
+        </p>
 
-        <v-card-text>
+        <div class="body-2">
           <wtf-renderer v-model="post.body" />
-        </v-card-text>
+        </div>
 
         <v-divider />
 
-        <v-card-title>Comments</v-card-title>
+        <h4 class="subtitle-1">
+          Comments
+        </h4>
 
         <wtf-comments v-model="comments" :post-id="post.slug" />
       </v-col>

@@ -78,10 +78,11 @@
             <wtf-user-menu />
           </template>
         </v-app-bar>
-
-        <v-card>
-          <nuxt />
-        </v-card>
+        <v-sheet>
+          <v-container>
+            <nuxt />
+          </v-container>
+        </v-sheet>
       </v-container>
     </v-content>
 

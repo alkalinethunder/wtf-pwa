@@ -1,21 +1,23 @@
 <template>
   <div>
-    <v-card-title class="display-1">
+    <h1 class="headline">
       {{ value.name }}
-    </v-card-title>
+    </h1>
 
-    <v-breadcrumbs :items="breadcrumbs" />
-
-    <v-card-text v-if="value.body">
-      <wtf-renderer v-model="value.body" />
-    </v-card-text>
+    <p class="body-2">
+      <wtf-renderer
+        v-if="value.body"
+        v-model="value.body"
+      />
+    </p>
 
     <v-divider v-if="value.created && value.edited" />
     <v-card-actions v-if="value.created && value.edited">
-      <v-card-subtitle>
-        Created {{ created }} - Last edited {{ lastEdited }}
-      </v-card-subtitle>
+      <v-breadcrumbs :items="breadcrumbs" />
       <v-spacer />
+      <span class="overline">
+        Created {{ created }} - Last edited {{ lastEdited }}
+      </span>
       <v-btn
         v-if="$auth.loggedIn && $auth.user.owner"
         text

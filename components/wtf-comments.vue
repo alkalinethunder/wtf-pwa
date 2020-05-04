@@ -2,15 +2,13 @@
   <div>
     <div v-if="postId">
       <v-form v-if="$auth.loggedIn" @submit="postComment">
-        <v-card-text>
-          <v-text-field v-model="newComment" label="Post a new comment" multi-line dense />
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn text type="submit" :disabled="!commentValid">
-            Post
-          </v-btn>
-        </v-card-actions>
+        <v-text-field v-model="newComment" label="Post a new comment">
+          <template slot="append">
+            <v-btn text type="submit" :disabled="!commentValid">
+              Post
+            </v-btn>
+          </template>
+        </v-text-field>
       </v-form>
     </div>
     <div v-if="value && value.length">
@@ -18,9 +16,9 @@
         <wtf-comment :comment="comment" />
       </div>
     </div>
-    <v-card-text v-else>
-      <p>There are no comments to display yet.</p>
-    </v-card-text>
+    <p v-else class="caption">
+      There are no comments to display yet.
+    </p>
   </div>
 </template>
 
