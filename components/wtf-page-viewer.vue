@@ -6,12 +6,12 @@
 
     <v-breadcrumbs :items="breadcrumbs" />
 
-    <v-card-text>
+    <v-card-text v-if="value.body">
       <wtf-renderer v-model="value.body" />
     </v-card-text>
 
-    <v-divider />
-    <v-card-actions>
+    <v-divider v-if="value.created && value.edited" />
+    <v-card-actions v-if="value.created && value.edited">
       <v-card-subtitle>
         Created {{ created }} - Last edited {{ lastEdited }}
       </v-card-subtitle>

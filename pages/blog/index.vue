@@ -1,7 +1,6 @@
 <template>
   <div>
-    <v-card-title>Blog</v-card-title>
-    <v-card-subtitle>A place full of complete and total rambling.</v-card-subtitle>
+    <wtf-page-viewer v-model="page" :breadcrumbs="breadcrumbs" />
 
     <div v-if="posts.length">
       <div v-for="post of posts" :key="post.id">
@@ -38,7 +37,28 @@ export default {
   data () {
     return {
       valid: false,
-      posts: []
+      posts: [],
+      page: {
+        _id: null,
+        name: 'Blog',
+        body: '',
+        slug: 'blog',
+        parent: null,
+        created: null,
+        edited: null
+      },
+      breadcrumbs: [
+        {
+          text: '/',
+          to: '/',
+          exact: true
+        },
+        {
+          text: 'Blog',
+          to: '/blog',
+          exact: true
+        }
+      ]
     }
   },
   mounted () {
