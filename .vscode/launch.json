@@ -4,7 +4,7 @@
         {
             "type": "node",
             "name": "Launch (Development)",
-            "runtimeExecutable": "npm",
+            "runtimeExecutable": "yarn",
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "runtimeArgs": [ "run", "dev:debug" ],
@@ -14,7 +14,7 @@
         {
             "type": "node",
             "name": "Launch (Production)",
-            "runtimeExecutable": "npm",
+            "runtimeExecutable": "yarn",
             "runtimeArgs": [ "run", "start" ],
             "cwd": "${workspaceFolder}",
             "request": "launch",

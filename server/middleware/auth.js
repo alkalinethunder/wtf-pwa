@@ -13,7 +13,7 @@ class Auth {
   }
 
   generateToken (user, cb) {
-    const access = jwt.sign(user.toJSON(), process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' })
+    const access = jwt.sign(user.toJSON(), process.env.ACCESS_TOKEN_SECRET)
     const refresh = jwt.sign(user.toJSON(), process.env.REFRESH_TOKEN_SECRET)
 
     const storedToken = new Token({

@@ -23,6 +23,45 @@ module.exports = {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ]
   },
+  /*
+    FUCKMEINTHEASS: this is insecure but temporary, delete when nuxt auth v5 comes out
+  */
+  auth: {
+    strategies: {
+      local: {
+        _scheme: 'local',
+        autoFetchUser: true,
+        tokenType: 'bearer',
+        endpoints: {
+          login: {
+            url: '/api/auth/login',
+            method: 'post',
+            propertyName: 'access'
+          },
+          logout: {
+            url: '/api/auth/logout',
+            method: 'post'
+          },
+          user: {
+            url: '/api/auth/user',
+            method: 'get',
+            propertyName: false
+          }
+        }
+      }
+    }
+  },
+  /*
+  FUCKMEINTHEASS: the auth module's github repo borked so we have to use v4 and can't do refresh tokens..
+  though I imagine since I was able to make up with kaylin somehow then maybe I can fucking fix that
+  ...or not.
+  ...we'll see.
+  ...fuck the pandemic.
+  ...fuck this auth module.
+  ...fuck npm.
+  ...I hate this.
+  ...uncomment this auth config when v5 comes out.
+   - a very pissed off but optimistically hopeful alkaline thunder
   auth: {
     strategies: {
       local: {
@@ -47,18 +86,7 @@ module.exports = {
       }
     }
   },
-  markdownit: {
-    preset: 'default',
-    linkify: true,
-    breaks: true,
-    injected: true,
-    html: true,
-    use: [
-      'markdown-it-div',
-      'markdown-it-attrs',
-      'markdown-it-sanitizer'
-    ]
-  },
+  */
   /*
   ** Customize the progress-bar color
   */
@@ -94,10 +122,7 @@ module.exports = {
     '@nuxtjs/dotenv',
     '@nuxtjs/axios',
     '@nuxtjs/auth',
-    '@nuxtjs/pwa',
-    // Doc: https://github.com/nuxt-community/dotenv-module
-    '@nuxtjs/dotenv',
-    '@nuxtjs/markdownit'
+    '@nuxtjs/pwa'
   ],
   /*
   ** Axios module configuration
