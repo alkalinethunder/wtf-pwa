@@ -21,7 +21,7 @@ jobs:
             sh ~/backup-uploads.sh
             cd ~/wtf-pwa
             git pull origin master
-            npm install
-            npm run build
+            yarn install
+            yarn run build
             pm2 restart wtf
             sh ~/restore-uploads.sh

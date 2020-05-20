@@ -1,5 +1,58 @@
 import Vue from 'vue'
-import 'vuetify-markdown-editor/dist/vuetify-markdown-editor.css'
+import mdRenderer from 'vue-markdown-renderer'
+import { component as VueCodeHighlight } from 'vue-code-highlight'
+import '~/node_modules/vue-code-highlight/themes/prism-twilight.css'
 
 Vue.component('Editor', async () => (await import('vuetify-markdown-editor')).Editor)
 Vue.component('wtf-renderer', async () => (await import('~/components/wtf-renderer.vue')))
+
+function getHeadingClass (depth) {
+  switch (depth) {
+    case 1:
+      return 'headline'
+    case 2:
+      return 'title'
+    case 3:
+      return 'subtitle-1'
+    case 4:
+      return 'subtitle-2'
+    case 5:
+      return 'caption'
+    case 6:
+      return 'overline'
+  }
+}
+
+Vue.use(mdRenderer, {
+  marked: {
+    gfm: true,
+    breaks: true
+  },
+  elements: {
+    image: 'v-img',
+    routerLink: 'nuxt-link',
+    table: 'v-simple-table'
+  },
+  mappings: {
+    code: ({ token, createElement }) => createElement(
+      VueCodeHighlight,
+      token.text
+    ),
+    hr: ({ createElement }) => createElement('v-divider'),
+    blockquote: ({ token, createElement, config, processTokens }) => createElement('blockquote', {
+      attrs: {
+        class: 'blockquote'
+      }
+    }, processTokens(token.tokens, createElement, config)),
+    heading: ({ token, createElement, config, processTokens }) => createElement(config.elements.headingPrefix + token.depth, {
+      attrs: {
+        class: getHeadingClass(token.depth)
+      }
+    }, processTokens(token.tokens, createElement, config)),
+    paragraph: ({ token, createElement, config, processTokens }) => createElement('p', {
+      attrs: {
+        class: 'body-1'
+      }
+    }, processTokens(token.tokens, createElement, config))
+  }
+})

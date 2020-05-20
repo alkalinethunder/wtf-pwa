@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="headline">
+    <h1 class="display-1">
       {{ value.name }}
     </h1>
 
