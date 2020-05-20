@@ -19,8 +19,9 @@ jobs:
           port: 22
           script: |
             sh ~/backup-uploads.sh
+            rm -rf ~/wtf-pwa
+            git clone https://github.com/alkalinethunder/wtf-pwa ~/wtf-pwa
             cd ~/wtf-pwa
-            git pull origin master
             yarn install
             yarn run build
             pm2 restart wtf
