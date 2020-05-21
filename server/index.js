@@ -25,6 +25,7 @@ async function start (siteSettings) {
   const authRoute = require('./routes/auth')
   const PagesRouter = require('./routes/pages')
   const PageRouter = require('./routes/page')
+  const ThemeRouter = require('./routes/theme')
 
   await nuxt.ready()
   // Build only in dev mode
@@ -44,6 +45,7 @@ async function start (siteSettings) {
   app.use('/api/auth', authRoute)
   app.use('/api/pages', PagesRouter)
   app.use('/api/page', PageRouter)
+  app.use('/api/theme', ThemeRouter)
 
   // Give nuxt middle`ware to express
   app.use(nuxt.render)
