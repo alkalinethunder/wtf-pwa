@@ -5,12 +5,25 @@ const app = express()
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const SiteSetting = require('./models/sitesetting')
+const fs = require('fs')
+const path = require('path')
+
+const themesPath = path.join(__dirname, '..', 'themes')
+const themePath = path.join(themesPath, 'material')
+const themeManifestPath = path.join(themePath, 'manifest.json')
 
 require('dotenv').config()
+
+
 
 // Import and Set Nuxt.js options
 const config = require('../nuxt.config.js')
 config.dev = process.env.NODE_ENV !== 'production'
+
+// read and parse the theme manifest.
+const theme = JSON.parse(fs.readFileSync(themeManifestPath))
+
+app.locals.theme = theme
 
 async function start (siteSettings) {
   // Init Nuxt.js
@@ -26,6 +39,7 @@ async function start (siteSettings) {
   const PagesRouter = require('./routes/pages')
   const PageRouter = require('./routes/page')
   const ThemeRouter = require('./routes/theme')
+  const MenuRouter = require('./routes/menu')
 
   await nuxt.ready()
   // Build only in dev mode
@@ -46,6 +60,7 @@ async function start (siteSettings) {
   app.use('/api/pages', PagesRouter)
   app.use('/api/page', PageRouter)
   app.use('/api/theme', ThemeRouter)
+  app.use('/api/menu', MenuRouter)
 
   // Give nuxt middle`ware to express
   app.use(nuxt.render)
