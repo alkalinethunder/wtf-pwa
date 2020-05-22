@@ -67,19 +67,25 @@ async function getPageSlug(id) {
   return slug
 }
 
-async function setMenuItemLinks(items) {
-  for (const item of items) {
-    switch (item.type) {
-      case 'post':
-        const post = await Post.findById(item.post)
-        item.href = `/blog/${post.slug}`
-        break;
-      case 'page':
-        item.href = await getPageSlug(item.page)
-        break;
-    }
+async function setMenuItemLink(item) {
+  switch (item.type) {
+    case 'post':
+      const post = await Post.findById(item.post)
+      item.href = `/blog/${post.slug}`
+      break;
+    case 'page':
+      item.href = await getPageSlug(item.page)
+      break;
   }
-  return items
+  return item
+}
+
+async function setMenuItemLinks(items) {
+  const modified = []
+  for (const item of items) {
+    modified.push(await setMenuItemLink(item))
+  }
+  return modified
 }
 
 function getAvailableSlotNames(manifest) {
@@ -163,7 +169,14 @@ router.post('/', auth.owner, function (req, res) {
                     message: err.message
                   })
                 } else if (saved) {
-                  res.status(200).json(saved)
+                  setMenuItemLink(saved)
+                    .then((item) => {
+                      res.status(200).json(saved)
+                    }).catch((err) => {
+                      res.status(500).json({
+                        message: err.message
+                      })
+                    })
                 } else {
                   res.status(500).json({
                     message: 'An error has occurred saving the menu item.'
