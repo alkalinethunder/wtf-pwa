@@ -1,15 +1,20 @@
 export const state = () => {
   return {
-    menus: {}
+    menus: {},
+    theme: {}
   }
 }
 
 export const mutations = {
+  addItem (state, item) {
+    if (!(item.slot in state.menus)) {
+      state.menus[item.slot] = []
+    }
+    state.menus[item.slot].push(item)
+  },
   update (state, { manifest, menuSystem }) {
-    alert(manifest)
-    alert(menuSystem)
-
     state.menus = {}
+    state.theme = manifest
 
     for (const menu of manifest.menus) {
       if (!(menu.slot in state.menus)) {
