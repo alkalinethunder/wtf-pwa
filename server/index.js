@@ -73,51 +73,63 @@ async function start (siteSettings) {
   })
 }
 
-function ensureSiteSettingsExist () {
-  SiteSetting.findOne({}).exec(function (err, settings) {
-    if (settings) {
-      start(settings)
-    } else if (err) {
-      throw err
-    } else {
-      const newSettings = new SiteSetting({})
-      newSettings.save(function (err, saved) {
-        if (err) {
-          throw err
-        } else if (saved) {
-          start(saved)
-        } else {
-          throw new Error('Something went SERIOUSLY fucking wrong.')
-        }
-      })
-    }
-  })
+async function ensureSiteSettingsExist () {
+  const sitesettings = SiteSetting.findOne({})
+  if (sitesettings) {
+    return sitesettings
+  } else {
+    const newSettings = new siteSetting({})
+    return await newSettings.save()
+  }
 }
 
-function createHomePage() {
+async function ensureSystemPage(name, slug, parent, body) {
   const Page = require('./models/page')
 
-  Page.findOne({ slug: '<index>' }).exec(function (err, page) {
-    if (err) {
-      throw err
-    } else if (!page) {
-      const newHome = new Page({
-        name: 'Home',
-        slug: '<index>',
-        created: new Date(),
-        edited: new Date(),
-        body: 'Edit this page using **Administration.**'
-      })
-
-      newHome.save(function (err, saved) {
-        if (err) {
-          throw err
-        }
-      })
-    }
+  const existingPage = await Page.findOne({
+    name,
+    slug,
+    parent
   })
+
+  if (existingPage && !existingPage.system) {
+    existingPage.system = true
+    return await existingPage.save()
+  } else if (!existingPage) {
+    if (parent) {
+      const parentExists = await Page.findById(parent)
+      if (!parentExists) {
+        throw new Error('Specified parent page does not exist.')
+      }
+    }
+
+    const systemPage = new Page({
+      name,
+      slug,
+      body,
+      parent,
+      created: new Date(),
+      edited: new Date(),
+      system: true
+    })
+
+    return await systemPage.save()
+  }
+
+  return existingPage
 }
 
-mongoose.connect('mongodb://localhost/wtf')
-  .then(() => { createHomePage() })
-  .then(() => { ensureSiteSettingsExist() });
+async function configureDatabase() {
+  await mongoose.connect('mongodb://localhost/wtf', { useUnifiedTopology: true, useNewUrlParser: true })
+
+  const homepage = await ensureSystemPage('Home', '<index>', null, 'Edit this page in **Administration**.')
+  const blog = await ensureSystemPage('Blog', 'blog', null, 'Edit this page in **Administration**.')
+
+  const sitesettings = await ensureSiteSettingsExist()
+  return sitesettings
+}
+
+configureDatabase()
+  .then((sitesettings) => {
+    start(sitesettings)
+  })
