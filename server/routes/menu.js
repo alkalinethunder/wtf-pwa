@@ -195,30 +195,4 @@ router.post('/', auth.owner, function (req, res) {
   }
 })
 
-router.get('/:slot', function (req, res) {
-  const menuSlots = getAvailableSlotNames(req.app.locals.theme)
-  MenuItem.find({}).exec(function (err, menuItems) {
-    if (err) {
-      res.status(500).json({
-        message: err.message
-      })
-    } else {
-      const response = []
-      for (let item of menuItems) {
-        if (item.slot === req.params.slot || (req.params.slot === 'primary' && !menuSlots.includes(item.slot))) {
-          response.push(item.toJSON())
-        }
-      }
-      setMenuItemLinks(response)
-        .then((items) => {
-          res.status(200).json(items)
-        }).catch((err) => {
-          res.status(500).json({
-            message: err.message
-          })
-        })
-    }
-  })
-})
-
 module.exports = router
