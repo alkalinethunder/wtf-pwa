@@ -73,12 +73,33 @@ async function start (siteSettings) {
   })
 }
 
+async function createDefaultMenuItems () {
+  const MenuItem = require('./models/menuitem')
+  const Page = require('./models/page')
+
+  const systemPages = await Page.find({ system: true })
+
+  for (let page of pages) {
+    const exists = await MenuItem.findOne({ name: page.Name, page: page._id, type: 'page' })
+    if  (!exists) {
+      const menuItem = new MenuItem({
+        name: page.name,
+        slot: 'primary',
+        page: page._id,
+        type: 'page'
+      })
+      await menuItem.save()
+    }
+  }
+}
+
 async function ensureSiteSettingsExist () {
   const sitesettings = SiteSetting.findOne({})
   if (sitesettings) {
     return sitesettings
   } else {
     const newSettings = new siteSetting({})
+    await createDefaultMenuItems()
     return await newSettings.save()
   }
 }
