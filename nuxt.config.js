@@ -4,6 +4,7 @@ module.exports = {
   mode: 'spa',
   router: {
     middleware: [
+      'menu',
       'setup'
     ]
   },
@@ -100,6 +101,7 @@ module.exports = {
   ** Plugins to load before mounting the App
   */
   plugins: [
+    { src: '~/plugins/menu.js', ssr: false },
     { src: '~/plugins/localStorage.js', ssr: false },
     { src: '~/plugins/wtf-core.js', ssr: false },
     { src: '~/plugins/markdown.js', ssr: false }

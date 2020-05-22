@@ -82,6 +82,68 @@
           <v-container>
             <nuxt />
           </v-container>
+
+          <v-container>
+            <v-row>
+              <v-col
+                cols="12"
+                md="4"
+              >
+                <v-list v-if="$menu('footer-1')">
+                  <v-list-item
+                    v-for="item of $menu('footer-1')"
+                    :key="item._id"
+                    :href="item.type === 'external' ? item.href : null"
+                    :to="item.type !== 'external' ? item.href : null"
+                  >
+                    <v-list-item-content>
+                      <v-list-item-title>
+                        {{ item.name }}
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
+              </v-col>
+              <v-col
+                cols="12"
+                md="4"
+              >
+                <v-list v-if="$menu('footer-2')">
+                  <v-list-item
+                    v-for="item of $menu('footer-2')"
+                    :key="item._id"
+                    :href="item.type === 'external' ? item.href : null"
+                    :to="item.type !== 'external' ? item.href : null"
+                  >
+                    <v-list-item-content>
+                      <v-list-item-title>
+                        {{ item.name }}
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
+              </v-col>
+              <v-col
+                cols="12"
+                md="4"
+              >
+                <v-list v-if="$menu('footer-3')">
+                  <v-list-item
+                    v-for="item of $menu('footer-3')"
+                    :key="item._id"
+                    :href="item.type === 'external' ? item.href : null"
+                    :to="item.type !== 'external' ? item.href : null"
+                  >
+                    <v-list-item-content>
+                      <v-list-item-title>
+                        {{ item.name }}
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
+              </v-col>
+            </v-row>
+          </v-container>
         </v-sheet>
       </v-container>
     </v-content>

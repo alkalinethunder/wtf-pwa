@@ -1,0 +1,30 @@
+{
+  "name": "Material Design",
+  "author": "Alkaline Thunder",
+  "system": true,
+  "description": "Mobile-friendly Material Design theme for wtf-pwa written using Vuetify.  Supports dark theme toggle and responsive layout for desktop and mobile.  This is the default system layout.",
+  "supportsDarkMode": true,
+  "menus": [
+    {
+      "slot": "primary",
+      "name": "Primary Navigation",
+      "description": "The navigation menu shown in the page header area (desktop) and App Drawer (mobile)."
+    },
+    {
+      "slot": "footer-1",
+      "name": "Footer 1",
+      "description": "A vertical navigation menu displayed on the left side of the footer."
+    },
+    {
+      "slot": "footer-2",
+      "name": "Footer 2",
+      "description": "A vertical navigation menu displayed in the middle of the footer."
+    },
+    {
+      "slot": "footer-3",
+      "name": "Footer 3",
+      "description": "A vertical navigation menu displayed on the right side of the footer."
+    }
+  ],
+  "prismTheme": "prism-twilight"
+}

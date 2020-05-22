@@ -1,14 +1,13 @@
 <template>
   <div>
-    <v-tabs dark color="white" background-color="transparent">
-      <v-tab to="/">
-        Home
-      </v-tab>
-      <v-tab to="/blog">
-        Blog
-      </v-tab>
-      <v-tab to="/projects">
-        Projects
+    <v-tabs v-if="$menu('primary')" dark color="white" background-color="transparent">
+      <v-tab
+        v-for="item of $menu('primary')"
+        :key="item._id"
+        :href="item.type === 'external' ? item.href : null"
+        :to="item.type !== 'external' ? item.href : null"
+      >
+        {{ item.name }}
       </v-tab>
     </v-tabs>
   </div>
