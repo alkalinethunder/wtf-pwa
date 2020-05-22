@@ -1,3 +1,5 @@
+import Vue from 'vue'
+
 export const state = () => {
   return {
     menus: {},
@@ -6,6 +8,14 @@ export const state = () => {
 }
 
 export const mutations = {
+  deleteItem (state, id) {
+    for (const slot of Object.keys(state.menus)) {
+      const index = state.menus[slot].findIndex(x => x._id === id)
+      if (index !== -1) {
+        Vue.set(state.menus, state.menus[slot].splice(index, 1))
+      }
+    }
+  },
   addItem (state, item) {
     if (!(item.slot in state.menus)) {
       state.menus[item.slot] = []

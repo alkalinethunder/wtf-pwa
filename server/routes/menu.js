@@ -195,4 +195,53 @@ router.post('/', auth.owner, function (req, res) {
   }
 })
 
+router.get('/:id', function (req, res) {
+  MenuItem.findById(req.params.id).exec(function (err, item) {
+    if (err) {
+      res.status(500).json({
+        message: err.message
+      })
+    } else if (item) {
+      setMenuItemLink(item)
+        .then((item) => {
+          res.status(200).json(item)
+        }).catch((err) => {
+          res.status(500).json({
+            message: err.message
+          })
+        })
+    } else {
+      res.status(404).json({
+        message: 'Menu item not found.'
+      })
+    }
+  })
+})
+
+router.post('/:id/delete', auth.owner, function (req, res) {
+  MenuItem.findById(req.params.id).exec(function (err, item) {
+    if (err) {
+      res.status(500).json({
+        message: err.message
+      })
+    } else if (item) {
+      MenuItem.deleteOne(item).exec(function (err, deleted) {
+        if (err) {
+          res.status(500).json({
+            message: err.message
+          })
+        } else {
+          res.status(200).json({
+            message: 'Menu item deleted successfully.'
+          })
+        }
+      })
+    } else {
+      res.status(404).json({
+        message: 'Menu item not found.'
+      })
+    }
+  })
+})
+
 module.exports = router

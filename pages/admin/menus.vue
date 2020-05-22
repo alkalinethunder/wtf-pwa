@@ -35,12 +35,28 @@
           </v-list-item>
 
           <v-list v-if="$menu(slot.slot)">
-            <v-list-item v-for="item of $menu(slot.slot)" :key="item.name">
+            <v-list-item v-for="item of $menu(slot.slot)" :key="item._id">
+              <v-list-item-icon>
+                <v-icon>mdi-menu</v-icon>
+              </v-list-item-icon>
+
               <v-list-item-content>
                 <v-list-item-title>
                   {{ item.name }}
                 </v-list-item-title>
+                <v-list-item-subtitle>
+                  <code>{{ item.type }}</code>
+                  &bull;
+                  <v-icon small>
+                    mdi-link
+                  </v-icon>
+                  <code>{{ item.href }}</code>
+                </v-list-item-subtitle>
               </v-list-item-content>
+
+              <v-btn v-if="$auth.user.owner" icon @click="showDelete(item._id)">
+                <v-icon>mdi-delete</v-icon>
+              </v-btn>
             </v-list-item>
           </v-list>
           <v-card-text v-else>
@@ -50,6 +66,31 @@
         </v-card>
       </v-col>
     </v-row>
+
+    <v-dialog v-if="$auth.user.owner" v-model="deleteIsOpen" persistent width="600">
+      <v-card>
+        <v-card-title class="title">
+          Delete menu item
+        </v-card-title>
+
+        <v-card-text>
+          Are you sure you want to delete this menu item?
+        </v-card-text>
+
+        <v-divider />
+
+        <v-card-actions>
+          <v-spacer />
+
+          <v-btn text @click="deleteIsOpen = ''">
+            Nope
+          </v-btn>
+          <v-btn text color="primary" @click="deleteItem">
+            Yeah, sure, whatever.
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
     <v-dialog v-if="$auth.user.owner" v-model="creating" persistent width="750">
       <template v-slot:activator="{ on }">
@@ -155,6 +196,8 @@
 export default {
   data () {
     return {
+      deleteIsOpen: false,
+      deleteId: '',
       nameError: '',
       linkError: '',
       typeError: '',
@@ -221,6 +264,21 @@ export default {
       })
   },
   methods: {
+    showDelete (id) {
+      this.deleteIsOpen = true
+      this.deleteId = id
+    },
+    deleteItem () {
+      this.$axios.post(`/api/menu/${this.deleteId}/delete`, {})
+        .then((res) => {
+          this.$store.commit('menu/deleteItem', this.deleteId)
+          this.deleteId = ''
+          this.deleteIsOpen = false
+          this.$router.replace('/admin/menus')
+        }).catch((err) => {
+          alert(err)
+        })
+    },
     createMenuItem () {
       this.creating = true
     },
@@ -278,3 +336,9 @@ export default {
   }
 }
 </script>
+
+<style>
+code {
+  background: transparent !important;
+}
+</style>
