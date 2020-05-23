@@ -1,0 +1,53 @@
+<template>
+  <v-row>
+    <v-col cols="12" md="6">
+      <v-textarea
+        dense
+        solo
+        flat
+        class="monospace-editor"
+        rows="1"
+        auto-grow
+        :label="labelText"
+        :value="value"
+        @input="$emit('input', $event)"
+      />
+    </v-col>
+    <v-col cols="12" md="6">
+      <h6 class="overline">
+        Preview
+      </h6>
+      <v-divider />
+      <markdown-renderer v-model="value" />
+    </v-col>
+  </v-row>
+</template>
+
+<script>
+export default {
+  data () {
+    return {
+      markdown: '',
+      labelText: 'Markdown'
+    }
+  },
+  props: {
+    value: {
+      type: String,
+      default () {
+        return this.markdown
+      }
+    },
+    label: {
+      type: String,
+      default () { return this.labelText }
+    }
+  }
+}
+</script>
+
+<style scoped>
+.monospace-editor {
+  font-family: monospace !important;
+}
+</style>
