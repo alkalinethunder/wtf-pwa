@@ -30,18 +30,23 @@
     <v-dialog
       v-if="$auth.loggedIn && $auth.user.owner"
       v-model="quickEdit"
+      persistent
+      width="1200"
     >
-      <v-container>
-        <v-card>
-          <v-card-title class="title">
-            Edit {{ editPage.name }}
-          </v-card-title>
+      <v-card>
+        <v-card-title class="title">
+          Edit {{ editPage.name }}
+        </v-card-title>
 
-          <v-divider />
+        <v-divider />
 
-          <wtf-page-editor v-model="editPage" quick @saved="reload" />
-        </v-card>
-      </v-container>
+        <wtf-page-editor
+          v-model="editPage"
+          quick
+          @saved="reload"
+          @canceled="quickEdit = false"
+        />
+      </v-card>
     </v-dialog>
   </div>
 </template>

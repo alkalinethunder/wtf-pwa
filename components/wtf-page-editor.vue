@@ -3,6 +3,7 @@
     <v-card-text>
       <v-textarea
         v-model="value.name"
+        v-if="!quick"
         class="display-1"
         dense
         solo
@@ -14,6 +15,7 @@
 
       <v-select
         v-model="value.parent"
+        v-if="!quick"
         :items="parents"
         label="Parent"
         dense
@@ -36,11 +38,27 @@
     >
       <v-icon>mdi-send</v-icon>
     </v-btn>
-    <v-card-actions v-else>
+    <v-divider v-if="!fab" />
+    <v-card-actions v-if="!fab">
+      <v-btn
+        v-if="$auth.loggedIn && $auth.user.owner && quick"
+        text
+        :to="`/admin/pages/${value._id}`"
+      >
+        Full Editor
+      </v-btn>
       <v-spacer />
+      <v-btn
+        v-if="quick"
+        text
+        @click="$emit('canceled')"
+      >
+        Cancel
+      </v-btn>
       <v-btn
         text
         type="submit"
+        color="primary"
       >
         Save
       </v-btn>

@@ -8,7 +8,7 @@
         class="monospace-editor"
         rows="1"
         auto-grow
-        :label="labelText"
+        :label="label"
         :value="value"
         @input="$emit('input', $event)"
       />
@@ -18,7 +18,10 @@
         Preview
       </h6>
       <v-divider />
-      <markdown-renderer v-model="value" />
+      <markdown-renderer
+        v-if="value"
+        v-model="value"
+      />
     </v-col>
   </v-row>
 </template>
@@ -27,8 +30,7 @@
 export default {
   data () {
     return {
-      markdown: '',
-      labelText: 'Markdown'
+      markdown: ''
     }
   },
   props: {
@@ -40,7 +42,7 @@ export default {
     },
     label: {
       type: String,
-      default () { return this.labelText }
+      default: () => 'Enter Markdown text here'
     }
   }
 }
