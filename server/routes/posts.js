@@ -47,6 +47,62 @@ router.get('/:slug/comments', function (req, res) {
   })
 })
 
+router.post('/:slug', auth.admin, function (req, res) {
+  const { name, excerpt, body } = req.body
+
+  Post.findOne({ slug: req.params.slug }).exec(async function(err, post) {
+    try {
+      if (err) {
+        res.status(500).json({
+          message: err.message
+        })
+      } else if (post) {
+        if (name) {
+          const newName = name.trim()
+          if (newName !== post.name) {
+            const newSlug = slugify(newName)
+            const existingPost = await Post.findOne({
+              $or: [
+                { name: newName },
+                { slug: newSlug }
+              ]
+            })
+
+            if (existingPost) {
+              res.status(400).json({
+                message: 'A post with that name already exists.'
+              })
+            } else {
+              post.name = newName
+              post.slug = newSlug
+            }
+          }
+        }
+
+        if (excerpt) {
+          post.excerpt = excerpt.trim()
+        }
+
+        if (body) {
+          post.body = body.trim()
+        }
+
+        const saved = await post.save()
+
+        res.status(200).json(saved)
+      } else {
+        res.status(404).json({
+          message: 'Post not found.'
+        })
+      }
+    } catch (err) {
+      res.status(500).json({
+        message: err.message
+      })
+    }
+  })
+})
+
 router.post('/:slug/comments', auth.authenticate, function (req, res) {
   const slug = req.params.slug
   const commentBody = req.body.comment && req.body.comment.trim()
