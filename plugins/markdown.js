@@ -1,8 +1,10 @@
 import Vue from 'vue'
 import mdRenderer from 'vue-markdown-renderer'
 import { component as VueCodeHighlight } from 'vue-code-highlight'
-import '~/node_modules/vue-code-highlight/themes/prism-twilight.css'
 
+import 'prismjs/themes/prism-twilight.css'
+
+Vue.component('wtf-markdown-editor', async () => (await import('~/components/wtf-markdown-editor.vue')))
 Vue.component('Editor', async () => (await import('vuetify-markdown-editor')).Editor)
 Vue.component('wtf-renderer', async () => (await import('~/components/wtf-renderer.vue')))
 
