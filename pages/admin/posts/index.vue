@@ -152,7 +152,7 @@ export default {
       this.deleteOpen = true
     },
     postEdit (post) {
-      return `/admin/posts/edit/${post.slug}`
+      return `/admin/posts/${post.slug}`
     },
     moreInfo (post) {
       this.more = post
