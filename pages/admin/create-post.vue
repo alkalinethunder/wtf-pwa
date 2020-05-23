@@ -9,54 +9,44 @@
     <v-card-subtitle class="d-block d-md-none">
       Good blog posts have a post title, excerpt, featured image, and nicely formatted body.  Use the form below to create your post.  Scroll further down to see a preview of what your users will see.
     </v-card-subtitle>
-    <v-row>
-      <v-col
-        cols="12"
-        md="6"
-      >
-        <v-form v-model="valid" @submit="submitPost">
-          <v-card-text>
-            <v-text-field v-model="post.name" dense label="Post title" />
-            <v-text-field v-model="post.excerpt" dense label="Excerpt" />
-          </v-card-text>
+    <v-card>
+      <v-card-text>
+        <v-textarea
+          v-model="post.name"
+          class="display-1 transparent"
+          dense
+          solo
+          flat
+          label="Post name"
+          rows="1"
+          auto-grow
+        />
 
-          <Editor v-model="post.body" mode="editor" />
+        <v-textarea
+          v-model="post.excerpt"
+          rows="1"
+          auto-grow
+          dense
+          solo
+          flat
+          label="Post excerpt"
+          class="body-2"
+        />
 
-          <v-btn
-            fab
-            fixed
-            bottom
-            right
-            type="submit"
-            color="primary"
-          >
-            <v-icon>mdi-send</v-icon>
-          </v-btn>
-        </v-form>
-      </v-col>
-      <v-col
-        cols="12"
-        md="6"
-      >
-        <v-card
-          raised
-          outline
-        >
-          <v-card-subtitle>PREVIEW</v-card-subtitle>
-          <v-card-title class="display-1">
-            {{ post.name || 'Untitled post' }}
-          </v-card-title>
+        <wtf-markdown-editor v-model="post.body" />
+      </v-card-text>
+    </v-card>
 
-          <v-card-text v-if="post.excerpt">
-            {{ post.excerpt }}
-          </v-card-text>
-
-          <v-card-text>
-            <wtf-renderer v-model="post.body" />
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+    <v-btn
+      fab
+      fixed
+      bottom
+      right
+      color="primary"
+      @click="submitPost"
+    >
+      <v-icon>mdi-send</v-icon>
+    </v-btn>
   </div>
 </template>
 
@@ -86,9 +76,7 @@ export default {
     }
   },
   methods: {
-    submitPost (evt) {
-      evt.preventDefault()
-
+    submitPost () {
       const publish = {
         name: this.post.name,
         excerpt: this.post.excerpt,

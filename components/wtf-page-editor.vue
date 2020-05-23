@@ -1,42 +1,29 @@
 <template>
   <v-form v-if="value" @submit="savePage">
-    <v-row>
-      <v-col
-        cols="12"
-        md="6"
-      >
-        <v-card-text v-if="!quick">
-          <v-text-field v-model="value.name" label="Page title" />
-        </v-card-text>
+    <v-card-text>
+      <v-textarea
+        v-model="value.name"
+        class="display-1"
+        dense
+        solo
+        flat
+        rows="1"
+        auto-grow
+        :readonly="value.system"
+      />
 
-        <Editor v-model="value.body" mode="editor" />
+      <v-select
+        v-model="value.parent"
+        :items="parents"
+        label="Parent"
+        dense
+        solo
+        flat
+        :disabled="value.system"
+      />
 
-        <v-card-text>
-          <v-select
-            v-model="value.parent"
-            :items="parents"
-            label="Parent"
-          />
-        </v-card-text>
-      </v-col>
-      <v-col
-        cols="12"
-        md="6"
-      >
-        <v-card raised>
-          <v-card-subtitle>PREVIEW</v-card-subtitle>
-          <v-card-title class="display-1">
-            {{ value.name || 'Untitled Page' }}
-          </v-card-title>
-          <v-card-text v-if="value.body">
-            <wtf-renderer v-model="value.body" />
-          </v-card-text>
-          <v-card-text v-else>
-            Start typing to see a live preview of the page.
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+      <wtf-markdown-editor v-model="value.body" />
+    </v-card-text>
 
     <v-btn
       v-if="fab"
@@ -86,7 +73,8 @@ export default {
           body: '',
           created: new Date(),
           edited: new Date(),
-          parent: null
+          parent: null,
+          system: false
         }
       }
     }
