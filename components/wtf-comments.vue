@@ -2,13 +2,25 @@
   <div>
     <div v-if="postId">
       <v-form v-if="$auth.loggedIn" @submit="postComment">
-        <v-text-field v-model="newComment" label="Post a new comment">
-          <template slot="append">
+        <v-card dense>
+          <v-card-text>
+            <v-textarea
+              v-model="newComment"
+              label="Post a new comment"
+              dense
+              solo
+              flat
+              rows="2"
+              auto-grow
+            />
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer />
             <v-btn text type="submit" :disabled="!commentValid">
               Post
             </v-btn>
-          </template>
-        </v-text-field>
+          </v-card-actions>
+        </v-card>
       </v-form>
     </div>
     <div v-if="value && value.length">
