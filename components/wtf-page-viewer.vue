@@ -93,8 +93,8 @@ export default {
     },
     reload (newPage) {
       this.editPage = newPage
-      this.value = newPage
       this.quickEdit = false
+      this.$emit('input', newPage)
     }
   }
 }
