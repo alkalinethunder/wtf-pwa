@@ -1,32 +1,48 @@
 <template>
   <div>
-    <wtf-page-viewer v-model="page" :breadcrumbs="breadcrumbs" />
+    <wtf-page-viewer :breadcrumbs="breadcrumbs">
+      <template slot="title">
+        {{ page.name }}
+      </template>
 
-    <div v-if="posts.length">
-      <div v-for="post of posts" :key="post.id">
-        <v-card :to="url(post)">
-          <v-img v-if="post.featuredUrl" :src="post.featuredUrl" />
+      <template slot="before-content">
+        <wtf-renderer v-model="page.body" />
+      </template>
 
-          <v-card-title>
-            {{ post.name }}
-          </v-card-title>
-          <v-card-subtitle>
-            Created {{ getCreatedDate(post) }}
-          </v-card-subtitle>
+      <div v-if="posts.length">
+        <v-card v-for="post in posts" :key="post._id" :to="`/blog/${post.category.slug}/${post.slug}`">
+          <v-list-item three-line dense>
+            <v-list-item-content>
+              <v-list-item-title class="overline">
+                {{ post.category.slug }}
+              </v-list-item-title>
+              <v-list-item-subtitle class="title">
+                {{ post.name }}
+              </v-list-item-subtitle>
+              <v-list-item-subtitle>
+                Created {{ getCreatedDate(post) }}.
+              </v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
 
-          <v-card-text>
+          <v-card-text v-if="post.excerpt">
             {{ post.excerpt }}
           </v-card-text>
         </v-card>
-      </div>
-    </div>
-    <div v-else>
-      <v-card outlined class="text-center">
-        <v-card-subtitle>This is awkward.</v-card-subtitle>
 
-        <v-card-text>There are currently no blog posts to display.</v-card-text>
-      </v-card>
-    </div>
+      </div>
+      <div v-else>
+        <v-card outlined class="text-center">
+          <v-card-subtitle>This is awkward.</v-card-subtitle>
+
+          <v-card-text>There are currently no blog posts to display.</v-card-text>
+        </v-card>
+      </div>
+
+      <template slot="page-actions">
+        <wtf-quick-editor v-model="page" />
+      </template>
+    </wtf-page-viewer>
   </div>
 </template>
 
@@ -65,6 +81,10 @@ export default {
     this.$axios.get('/api/posts')
       .then((res) => {
         this.posts = res.data
+        this.$axios.get('/api/page/blog')
+          .then((res) => {
+            this.page = res.data.page
+          })
       })
       .catch((err) => {
         if (err) {
@@ -74,7 +94,7 @@ export default {
   },
   methods: {
     url (post) {
-      return `/blog/${post.slug}`
+      return `/blog/${post.category.slug}/${post.slug}`
     },
     getCreatedDate (post) {
       return moment(post.created).fromNow()

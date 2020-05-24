@@ -1,5 +1,6 @@
 import Vue from 'vue'
 
+Vue.component('wtf-quick-editor', () => (import('~/components/wtf-quick-editor.vue')))
 Vue.component('wtf-navigation', () => (import('~/components/wtf-navigation.vue')))
 Vue.component('wtf-drawer-navigation', () => (import('~/components/wtf-drawer-navigation.vue')))
 Vue.component('wtf-drawer-user-menu', () => (import('~/components/wtf-drawer-user-menu.vue')))

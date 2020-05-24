@@ -1,45 +1,34 @@
 <template>
-  <div v-if="post">
-    <h1 class="headline">
-      {{ post.name }}
-    </h1>
-    <h2 class="subtitle-2 text--secondary">
-      Posted {{ getCreatedAt(post) }}.
-    </h2>
+  <div>
+    <wtf-page-viewer>
+      <template slot="title">
+        {{ post.name }}
+      </template>
+      <template slot="before-content">
+        <h2 class="subtitle-2 text--secondary">
+          Posted {{ getCreatedAt(post) }} &bull;
+          <v-chip :to="`/blog/${post.category.slug}`" small>
+            {{ post.category.name }}
+          </v-chip>
+        </h2>
+      </template>
 
-    <v-row>
-      <v-col
-        cols="12"
-        md="8"
-      >
-        <v-img v-if="post.featuredUrl" :src="post.featuredUrl" />
+      <v-img v-if="post.featuredUrl" :src="post.featuredUrl" />
 
-        <p v-if="post.excerpt" class="body-2">
-          {{ post.excerpt }}
-        </p>
+      <p v-if="post.excerpt" class="body-2">
+        {{ post.excerpt }}
+      </p>
 
-        <div class="body-2">
-          <wtf-renderer v-model="post.body" />
-        </div>
+      <wtf-renderer v-model="post.body" />
 
-        <v-divider />
-
+      <template slot="after-content">
         <h4 class="subtitle-1">
           Comments
         </h4>
 
         <wtf-comments v-model="comments" :post-id="post.slug" />
-      </v-col>
-      <v-col
-        cols="12"
-        md="4"
-      >
-        <v-card-title>Related posts</v-card-title>
-        <v-card-text>
-          This part of the page is under construction and not yet implemented.
-        </v-card-text>
-      </v-col>
-    </v-row>
+      </template>
+    </wtf-page-viewer>
   </div>
 </template>
 
@@ -55,7 +44,10 @@ export default {
         created: new Date(),
         featuredUrl: '',
         tags: [],
-        category: null,
+        category: {
+          slug: 'uncategorized',
+          name: 'Uncategorized'
+        },
         views: 0
       },
       commentBody: '',

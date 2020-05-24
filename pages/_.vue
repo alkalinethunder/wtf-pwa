@@ -1,6 +1,20 @@
 <template>
   <div>
-    <wtf-page-viewer v-model="page" :breadcrumbs="breadcrumbs" />
+    <wtf-page-viewer :breadcrumbs="breadcrumbs">
+      <template slot="title">
+        {{ page.name }}
+      </template>
+
+      <wtf-renderer v-model="page.body" />
+
+      <template slot="page-information">
+        Created {{ created }}, last edited {{ lastEdited }}.
+      </template>
+
+      <template slot="page-actions">
+        <wtf-quick-editor v-model="page" />
+      </template>
+    </wtf-page-viewer>
   </div>
 </template>
 
