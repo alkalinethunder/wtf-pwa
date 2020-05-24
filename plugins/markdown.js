@@ -42,7 +42,7 @@ Vue.use(mdRenderer, {
       if (token.href.startsWith('>')) {
         return createElement(config.elements.routerLink, {
           props: {
-            to: token.href.splice(0, 1)
+            to: token.href.substring(1)
           }
         }, processTokens(token.tokens, createElement, config))
       } else {

@@ -108,6 +108,9 @@ export default {
     }
   },
   computed: {
+    id () {
+      return this.value._id
+    },
     saveUrl () {
       if (this.creator) {
         return '/api/pages'
@@ -116,26 +119,46 @@ export default {
       }
     }
   },
+  watch: {
+    id (newValue) {
+      this.fetchParents()
+    }
+  },
   mounted () {
-    this.$axios.get('/api/pages')
-      .then((res) => {
-        this.buildPageTree(res.data, null, 0)
-      })
+    this.fetchParents()
   },
   methods: {
     buildPageTree (pages, parent, indent) {
       for (const page of pages) {
-        if (page.parent === parent) {
-          this.parents.push({
-            value: page._id,
-            text: `${'--'.repeat(indent)} ${page.name}`
-          })
+        if (page._id === this.value._id) {
+          continue
+        }
 
-          if (pages.filter(x => x.parent === page._id).length) {
-            this.buildPageTree(pages, page._id, indent + 1)
+        if (page.parent === parent) {
+          if (!page.system) {
+            this.parents.push({
+              value: page._id,
+              text: `${'--'.repeat(indent)} ${page.name}`
+            })
+
+            if (pages.filter(x => x.parent === page._id).length) {
+              this.buildPageTree(pages, page._id, indent + 1)
+            }
           }
         }
       }
+    },
+    fetchParents () {
+      this.$axios.get('/api/pages')
+        .then((res) => {
+          this.parents = [
+            {
+              value: null,
+              text: 'No parent'
+            }
+          ]
+          this.buildPageTree(res.data, null, 0)
+        })
     },
     savePage (evt) {
       evt.preventDefault()
