@@ -28,11 +28,6 @@
 
 <script>
 export default {
-  data () {
-    return {
-      markdown: ''
-    }
-  },
   props: {
     value: {
       type: String,
@@ -43,6 +38,11 @@ export default {
     label: {
       type: String,
       default: () => 'Enter Markdown text here'
+    }
+  },
+  data () {
+    return {
+      markdown: ''
     }
   }
 }

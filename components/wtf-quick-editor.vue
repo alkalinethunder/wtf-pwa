@@ -31,11 +31,6 @@
 
 <script>
 export default {
-  data () {
-    return {
-      quickEdit: false
-    }
-  },
   props: {
     value: {
       type: Object,
@@ -51,6 +46,11 @@ export default {
           system: false
         }
       }
+    }
+  },
+  data () {
+    return {
+      quickEdit: false
     }
   },
   methods: {

@@ -11,7 +11,9 @@
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
                 <v-chip v-if="page.system" small v-on="on">
-                  <v-icon small>mdi-lock</v-icon>
+                  <v-icon small>
+                    mdi-lock
+                  </v-icon>
                   System page
                 </v-chip>
               </template>
@@ -54,7 +56,6 @@
         <wtf-recursive-pages-list v-model="value" :parent="page._id" @delete="deletePage" />
       </v-list>
     </div>
-
   </div>
 </template>
 

@@ -18,12 +18,12 @@
     <v-divider />
 
     <v-row>
-      <v-col v-for="slot of theme.menus" cols="12" md="6" :key="slot.slot">
+      <v-col v-for="slot of theme.menus" :key="slot.slot" cols="12" md="6">
         <v-card raised>
           <v-list-item three-line>
             <v-list-item-content>
               <v-list-item-title class="overline">
-                {{ slot.slot }} ({{ theme.name}} Menu Slot)
+                {{ slot.slot }} ({{ theme.name }} Menu Slot)
               </v-list-item-title>
               <v-list-item-subtitle class="title">
                 {{ slot.name }}
@@ -60,8 +60,8 @@
             </v-list-item>
           </v-list>
           <v-card-text v-else>
-              This slot has no menu items in it.  The slot will not display on the page until at least one
-              item is added.
+            This slot has no menu items in it.  The slot will not display on the page until at least one
+            item is added.
           </v-card-text>
         </v-card>
       </v-col>
