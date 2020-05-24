@@ -25,7 +25,7 @@
               {{ post.category.name }}
             </v-chip>
           </v-list-item-title>
-          <v-list-item-subtitle>{{ createdAgo(post) }}</v-list-item-subtitle>
+          <v-list-item-subtitle>{{ createdAgo(post) }} by {{ postAuthor(post) }}</v-list-item-subtitle>
         </v-list-item-content>
 
         <v-btn icon :to="postEdit(post)">
@@ -158,6 +158,9 @@ export default {
     },
     postEdit (post) {
       return `/admin/posts/${post.slug}`
+    },
+    postAuthor (post) {
+      return post.author.displayName || post.author.username
     },
     moreInfo (post) {
       this.more = post

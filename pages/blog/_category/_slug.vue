@@ -6,7 +6,7 @@
       </template>
       <template slot="before-content">
         <h2 class="subtitle-2 text--secondary">
-          Posted {{ getCreatedAt(post) }} &bull;
+          Posted {{ created }} by {{ author }} &bull;
           <v-chip :to="`/blog/${post.category.slug}`" small>
             {{ post.category.name }}
           </v-chip>
@@ -44,6 +44,10 @@ export default {
         created: new Date(),
         featuredUrl: '',
         tags: [],
+        author: {
+          displayName: '',
+          username: ''
+        },
         category: {
           slug: 'uncategorized',
           name: 'Uncategorized'
@@ -52,6 +56,14 @@ export default {
       },
       commentBody: '',
       comments: []
+    }
+  },
+  computed: {
+    created () {
+      return moment(this.post.created).fromNow()
+    },
+    author () {
+      return this.post.author.displayName || this.post.author.username
     }
   },
   mounted () {

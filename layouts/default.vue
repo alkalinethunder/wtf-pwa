@@ -37,7 +37,12 @@
       class="d-xs-block d-sm-none"
     >
       <v-app-bar-nav-icon @click="drawer = !drawer" />
-      <v-toolbar-title>{{ settings.name }}</v-toolbar-title>
+      <v-flex class="d-flex flex-column ml-3">
+        <v-toolbar-title>{{ settings.name }}</v-toolbar-title>
+        <span class="caption">
+          {{ settings.description }}
+        </span>
+      </v-flex>
     </v-app-bar>
 
     <v-app-bar
@@ -47,10 +52,16 @@
       :color="themeBackground"
       dark
     >
-      <v-toolbar-title>{{ settings.name }}</v-toolbar-title>
+      <v-flex class="d-flex flex-column ml-3">
+        <v-toolbar-title>{{ settings.name }}</v-toolbar-title>
+        <span class="caption">
+          {{ settings.description }}
+        </span>
+      </v-flex>
       <wtf-navigation />
       <v-spacer />
       <wtf-socials />
+      <wtf-dark-mode-toggle />
       <wtf-user-menu />
     </v-app-bar>
     <v-content :class="themeBackground">
@@ -64,8 +75,15 @@
           dark
           class="d-none d-sm-block"
         >
-          <v-toolbar-title class="display-3">
-            {{ settings.name }}
+          <v-toolbar-title>
+            <v-flex class="d-flex flex-column mb-6">
+              <h1 class="display-3">
+                {{ settings.name }}
+              </h1>
+              <h2 class="headline">
+                {{ settings.description }}
+              </h2>
+            </v-flex>
           </v-toolbar-title>
 
           <v-spacer />
@@ -75,6 +93,7 @@
           <template slot="extension">
             <wtf-navigation />
             <v-spacer />
+            <wtf-dark-mode-toggle />
             <wtf-user-menu />
           </template>
         </v-app-bar>
@@ -143,32 +162,31 @@
                 </v-list>
               </v-col>
             </v-row>
+
+            <v-divider />
+
+            <v-flex class="d-flex flex-column justify-center text-center mt-3">
+              <p v-if="settings.showDeveloperCredit" class="caption">
+                wtf-pwa | Developed by Michael VanOverbeek.
+              </p>
+              <v-flex class="d-flex flex-row align-center ml-auto mr-auto">
+                <v-btn small text v-if="settings.showDeveloperCredit && settings.developerGitHubLinkInCredit" href="https://github.com/alkalinethunder/wtf-pwa" class="caption">
+                  Source code
+                </v-btn>
+                <v-btn
+                  v-if="$auth.loggedIn && ($auth.user.owner || $auth.user.admin)"
+                  small
+                  text
+                  to="/admin"
+                >
+                  Administration
+                </v-btn>
+              </v-flex>
+            </v-flex>
           </v-container>
         </v-sheet>
       </v-container>
     </v-content>
-
-    <v-footer app :dark="dark">
-      <span v-if="settings.showDeveloperCredit">
-        Developed by Michael VanOverbeek.
-        <a v-if="settings.developerGitHubLinkInCredit" href="https://github.com/alkalinethunder/wtf-pwa">
-          Source code
-        </a>
-      </span>
-      <v-spacer />
-      <v-btn
-        v-if="$auth.loggedIn && ($auth.user.owner || $auth.user.admin)"
-        small
-        text
-        to="/admin"
-      >
-        <v-icon>
-          mdi-cog
-        </v-icon>
-        Administrate
-      </v-btn>
-      <wtf-dark-mode-toggle small />
-    </v-footer>
   </v-app>
 </template>
 

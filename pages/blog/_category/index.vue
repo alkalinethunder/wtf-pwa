@@ -13,25 +13,7 @@
         </p>
       </template>
 
-      <v-card v-for="post in posts" :key="post._id" :to="`/blog/${post.category.slug}/${post.slug}`">
-        <v-list-item three-line dense>
-          <v-list-item-content>
-            <v-list-item-title class="overline">
-              {{ post.category.slug }}
-            </v-list-item-title>
-            <v-list-item-subtitle class="title">
-              {{ post.name }}
-            </v-list-item-subtitle>
-            <v-list-item-subtitle>
-              Created {{ created(post) }}.
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-
-        <v-card-text v-if="post.excerpt">
-          {{ post.excerpt }}
-        </v-card-text>
-      </v-card>
+      <wtf-post-card v-for="post of posts" :post="post" :key="post._id" />
     </wtf-page-viewer>
   </div>
 </template>
