@@ -1,3 +1,4 @@
+require('dotenv').config()
 const fs = require('fs')
 const path = require('path')
 const express = require('express')
@@ -11,8 +12,6 @@ const SiteSetting = require('./models/sitesetting')
 const themesPath = path.join(__dirname, '..', 'themes')
 const themePath = path.join(themesPath, 'material')
 const themeManifestPath = path.join(themePath, 'manifest.json')
-
-require('dotenv').config()
 
 // Import and Set Nuxt.js options
 config.dev = process.env.NODE_ENV !== 'production'
