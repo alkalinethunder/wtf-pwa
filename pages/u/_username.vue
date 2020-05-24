@@ -105,7 +105,6 @@
         </v-card>
       </v-container>
     </v-dialog>
-
   </div>
 </template>
 

@@ -4,7 +4,9 @@
       Edit page
     </v-card-title>
 
-    <wtf-page-editor v-model="page" fab @saved="goBack" />
+    <v-card v-if="page">
+      <wtf-page-editor v-model="page" fab @saved="goBack" />
+    </v-card>
   </div>
 </template>
 

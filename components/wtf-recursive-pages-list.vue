@@ -8,6 +8,19 @@
         <v-list-item-content>
           <v-list-item-title>
             {{ page.name }}
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-chip v-if="page.system" small v-on="on">
+                  <v-icon small>
+                    mdi-lock
+                  </v-icon>
+                  System page
+                </v-chip>
+              </template>
+              <span>
+                System pages cannot be moved, renamed, or deleted.
+              </span>
+            </v-tooltip>
           </v-list-item-title>
           <v-list-item-subtitle>
             Created
@@ -27,12 +40,12 @@
         </v-btn>
         <v-btn
           icon
-          :to="`/admin/pages/${page._id}`"
+          :to="editUrlOf(page)"
         >
           <v-icon>mdi-lead-pencil</v-icon>
         </v-btn>
         <v-btn
-          v-if="page.slug !== '<index>'"
+          v-if="!page.system"
           icon
           @click="deletePage(page)"
         >
@@ -43,7 +56,6 @@
         <wtf-recursive-pages-list v-model="value" :parent="page._id" @delete="deletePage" />
       </v-list>
     </div>
-
   </div>
 </template>
 
@@ -75,6 +87,9 @@ export default {
     },
     edited (page) {
       return moment(page.edited).fromNow()
+    },
+    editUrlOf (page) {
+      return `/admin/pages/${page._id}`
     },
     parentOf (page) {
       if (page.parent) {

@@ -19,8 +19,13 @@
         </v-list-item-icon>
 
         <v-list-item-content>
-          <v-list-item-title>{{ post.name }}</v-list-item-title>
-          <v-list-item-subtitle>{{ createdAgo(post) }}</v-list-item-subtitle>
+          <v-list-item-title>
+            {{ post.name }}
+            <v-chip small>
+              {{ post.category.name }}
+            </v-chip>
+          </v-list-item-title>
+          <v-list-item-subtitle>{{ createdAgo(post) }} by {{ postAuthor(post) }}</v-list-item-subtitle>
         </v-list-item-content>
 
         <v-btn icon :to="postEdit(post)">
@@ -42,7 +47,7 @@
             </v-list-item>
 
             <v-list-item @click="showDeleteDialog(post)">
-              <v-list-item-content>\
+              <v-list-item-content>
                 <v-list-item-title>Delete</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
@@ -52,7 +57,9 @@
     </v-list>
 
     <v-card-text v-if="!posts.length" class="text-center">
-      <h1 class="headline">No posts here...</h1>
+      <h1 class="headline">
+        No posts here...
+      </h1>
       <p>There are no posts to display on this page. Your blog is empty.</p>
       <v-btn color="primary" to="/admin/create-post">
         Create your first post!
@@ -152,7 +159,10 @@ export default {
       this.deleteOpen = true
     },
     postEdit (post) {
-      return `/admin/posts/edit/${post.slug}`
+      return `/admin/posts/${post.slug}`
+    },
+    postAuthor (post) {
+      return post.author.displayName || post.author.username
     },
     moreInfo (post) {
       this.more = post

@@ -1,23 +1,19 @@
+require('dotenv').config()
+const fs = require('fs')
+const path = require('path')
 const express = require('express')
 const consola = require('consola')
 const { Nuxt, Builder } = require('nuxt')
 const app = express()
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
+const mongoose = require('mongoose')
+const bodyParser = require('body-parser')
+const config = require('../nuxt.config.js')
 const SiteSetting = require('./models/sitesetting')
-const fs = require('fs')
-const path = require('path')
-
 const themesPath = path.join(__dirname, '..', 'themes')
 const themePath = path.join(themesPath, 'material')
 const themeManifestPath = path.join(themePath, 'manifest.json')
 
-require('dotenv').config()
-
-
-
 // Import and Set Nuxt.js options
-const config = require('../nuxt.config.js')
 config.dev = process.env.NODE_ENV !== 'production'
 
 // read and parse the theme manifest.
@@ -40,6 +36,8 @@ async function start (siteSettings) {
   const PageRouter = require('./routes/page')
   const ThemeRouter = require('./routes/theme')
   const MenuRouter = require('./routes/menu')
+  const CategoryRouter = require('./routes/category')
+  const CommentsRouter = require('./routes/comments')
 
   await nuxt.ready()
   // Build only in dev mode
@@ -52,15 +50,27 @@ async function start (siteSettings) {
   app.use(bodyParser())
 
   // give API routes so we have a backend.
-  app.use('/api/posts', postsRoute);
+  app.use('/api/posts', postsRoute)
   app.use('/api/setup', setupRouter)
-  app.use('/api/projects', projectsRoute);
-  app.use('/api/users', usersRoute);
+  app.use('/api/projects', projectsRoute)
+  app.use('/api/users', usersRoute)
   app.use('/api/auth', authRoute)
   app.use('/api/pages', PagesRouter)
   app.use('/api/page', PageRouter)
   app.use('/api/theme', ThemeRouter)
   app.use('/api/menu', MenuRouter)
+  app.use('/api/category', CategoryRouter)
+  app.use('/api/comments', CommentsRouter)
+
+  app.use(function (req, res, next) {
+    if (req.path.startsWith('/api')) {
+      res.status(404).json({
+        message: 'Requested endpont was not found.'
+      })
+    } else {
+      return next()
+    }
+  })
 
   // Give nuxt middle`ware to express
   app.use(nuxt.render)
@@ -73,15 +83,32 @@ async function start (siteSettings) {
   })
 }
 
+async function assignPostAuthors () {
+  const Post = require('./models/post')
+  const User = require('./models/user')
+
+  const owner = await User.findOne({ owner: true })
+
+  if (owner) {
+    const posts = await Post.find({})
+    for (const post of posts) {
+      if (!post.author) {
+        post.author = owner
+        await post.save()
+      }
+    }
+  }
+}
+
 async function createDefaultMenuItems () {
   const MenuItem = require('./models/menuitem')
   const Page = require('./models/page')
 
   const systemPages = await Page.find({ system: true })
 
-  for (let page of pages) {
+  for (const page of systemPages) {
     const exists = await MenuItem.findOne({ name: page.Name, page: page._id, type: 'page' })
-    if  (!exists) {
+    if (!exists) {
       const menuItem = new MenuItem({
         name: page.name,
         slot: 'primary',
@@ -94,17 +121,17 @@ async function createDefaultMenuItems () {
 }
 
 async function ensureSiteSettingsExist () {
-  const sitesettings = SiteSetting.findOne({})
+  const sitesettings = await SiteSetting.findOne({})
   if (sitesettings) {
     return sitesettings
   } else {
-    const newSettings = new siteSetting({})
+    const newSettings = new SiteSetting({})
     await createDefaultMenuItems()
     return await newSettings.save()
   }
 }
 
-async function ensureSystemPage(name, slug, parent, body) {
+async function ensureSystemPage (name, slug, parent, body) {
   const Page = require('./models/page')
 
   const existingPage = await Page.findOne({
@@ -140,11 +167,53 @@ async function ensureSystemPage(name, slug, parent, body) {
   return existingPage
 }
 
-async function configureDatabase() {
+async function ensureSystemCategory (name, slug) {
+  const Category = require('./models/category')
+
+  const existingCategory = await Category.findOne({
+    name,
+    slug
+  })
+
+  if (existingCategory) {
+    if (!existingCategory.system) {
+      existingCategory.system = true
+      return await existingCategory.save()
+    } else {
+      return existingCategory
+    }
+  } else {
+    const category = new Category({
+      name,
+      slug,
+      system: true
+    })
+    return await category.save()
+  }
+}
+
+async function categorizeOldPosts (category) {
+  const Post = require('./models/post')
+
+  const posts = await Post.find({})
+
+  for (const post of posts) {
+    if (!post.category) {
+      post.category = category
+      await post.save()
+    }
+  }
+}
+
+async function configureDatabase () {
   await mongoose.connect('mongodb://localhost/wtf', { useUnifiedTopology: true, useNewUrlParser: true })
 
-  const homepage = await ensureSystemPage('Home', '<index>', null, 'Edit this page in **Administration**.')
-  const blog = await ensureSystemPage('Blog', 'blog', null, 'Edit this page in **Administration**.')
+  await ensureSystemPage('Home', '<index>', null, 'Edit this page in **Administration**.')
+  await ensureSystemPage('Blog', 'blog', null, 'Edit this page in **Administration**.')
+
+  const uncategorized = await ensureSystemCategory('Uncategorized', 'uncategorized')
+  await categorizeOldPosts(uncategorized)
+  await assignPostAuthors()
 
   const sitesettings = await ensureSiteSettingsExist()
   return sitesettings

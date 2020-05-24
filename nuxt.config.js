@@ -102,6 +102,7 @@ module.exports = {
   */
   plugins: [
     { src: '~/plugins/menu.js', ssr: false },
+    { src: '~/plugins/prismEditor.js', ssr: false },
     { src: '~/plugins/localStorage.js', ssr: false },
     { src: '~/plugins/wtf-core.js', ssr: false },
     { src: '~/plugins/markdown.js', ssr: false }

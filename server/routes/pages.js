@@ -14,7 +14,7 @@ const reservedNames = [
 ]
 
 function moveChildren (page, moveTo, callback) {
-  function findNewHome(moveTo, callback) {
+  function findNewHome (moveTo, callback) {
     if (moveTo) {
       if (moveTo === page._id) {
         callback(new Error('Attempted to move children to where they already are.'), null)
@@ -229,7 +229,6 @@ router.post('/delete/:id', auth.owner, function (req, res) {
       })
     }
   })
-
 })
 
 router.get('/:id', function (req, res) {
@@ -248,49 +247,92 @@ router.get('/:id', function (req, res) {
   })
 })
 
-router.post('/:id', auth.owner, function (req, res) {
-  const { name, body } = req.body
-  const trimmedName = name && name.trim()
+router.post('/:id', auth.owner, async function (req, res) {
+  try {
+    const { name, parent, body } = req.body
+    const page = await Page.findById(req.params.id)
 
-  if (trimmedName) {
-    if(reservedNames.includes(trimmedName.toLowerCase())) {
-      res.status(400).json({
-        message: 'That page name is reserved by the API for special use cases.'
-      })
-    } else {
-      Page.findById(req.params.id).exec(function (err, page) {
-        if (err) {
-          res.status(500).json({
-            message: err.message
-          })
-        } else if (page) {
-          if (page.name !== trimmedName) {
-            res.status(400).json({
-              message: 'Page renaming is not yet implemented.'
-            })
-          } else {
-            page.body = (body && body.trim()) || ''
-            page.edited = new Date()
-            page.save(function (err, saved) {
-              if (err) {
-                res.status(500).json({
-                  message: err.message
-                })
-              } else if (saved) {
-                res.status(200).json(saved)
-              }
-            })
-          }
-        } else {
-          res.status(404).json({
-            message: 'Page not found.'
-          })
-        }
+    if (!page) {
+      return res.status(404).json({
+        message: 'Page not found.'
       })
     }
-  } else {
-    res.status(400).json({
-      message: 'Page name is required.'
+
+    if (parent !== page.parent) {
+      if (parent !== undefined) {
+        if (page.system) {
+          return res.status(403).json({
+            message: 'System pages cannot be moved.'
+          })
+        } else if (parent === null) {
+          page.parent = parent
+        } else {
+          const parentPage = await Page.findById(parent)
+          if (parentPage) {
+            let ancestorCheck = parentPage
+            while (ancestorCheck) {
+              if (ancestorCheck._id === page._id) {
+                return res.status(400).json({
+                  message: 'Cannot set parent of requested page to a child of that page.'
+                })
+              }
+              ancestorCheck = ancestorCheck.parent ? await Page.findById(ancestorCheck.parent) : null
+            }
+            page.parent = parentPage
+          } else {
+            return res.status(404).json({
+              message: 'New parent page was not found.'
+            })
+          }
+        }
+      }
+    }
+
+    if (name) {
+      const trimmed = name.trim()
+      const slug = slugify(trimmed).toLowerCase()
+
+      if (slug !== page.slug) {
+        if (page.system) {
+          return res.status(403).json({
+            message: 'System pages cannot be renamed.'
+          })
+        } else {
+          const existingPage = await Page.findOne({
+            parent: page.parent,
+            $or: [
+              { slug },
+              { name: trimmed }
+            ]
+          })
+
+          if (existingPage) {
+            return res.status(400).json({
+              message: 'A page already exists with that name.'
+            })
+          } else {
+            page.name = trimmed
+            page.slug = slug
+          }
+        }
+      }
+    }
+
+    if (body && body.trim()) {
+      page.body = body
+      page.edited = new Date()
+
+      const saved = await page.save()
+
+      res.status(200).json(saved)
+    } else {
+      res.status(400).json({
+        message: 'Page body is required.'
+      })
+    }
+  } catch (err) {
+    res.status(500).json({
+      message: err.message
     })
   }
 })

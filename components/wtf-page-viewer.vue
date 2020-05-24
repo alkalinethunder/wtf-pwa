@@ -1,100 +1,61 @@
 <template>
   <div>
-    <h1 class="display-1">
-      {{ value.name }}
-    </h1>
+    <slot name="append" />
 
-    <p class="body-2">
-      <wtf-renderer
-        v-if="value.body"
-        v-model="value.body"
-      />
-    </p>
+    <v-flex class="d-flex flex-row justify-start align-center">
+      <v-flex class="d-flex flex-column mr-auto">
+        <h1 class="display-1">
+          <slot name="title" />
+        </h1>
+        <h2 class="subtitle-1 text--secondary">
+          <slot name="page-information" />
+        </h2>
+      </v-flex>
+      <slot name="breadcrumbs">
+        <v-breadcrumbs v-if="breadcrumbs && breadcrumbs.length" :items="breadcrumbs" />
+      </slot>
+      <slot name="page-actions" />
+    </v-flex>
 
-    <v-divider v-if="value.created && value.edited" />
-    <v-card-actions v-if="value.created && value.edited">
-      <v-breadcrumbs :items="breadcrumbs" />
-      <v-spacer />
-      <span class="overline">
-        Created {{ created }} - Last edited {{ lastEdited }}
-      </span>
-      <v-btn
-        v-if="$auth.loggedIn && $auth.user.owner"
-        text
-        @click="activateQuickEdit"
+    <v-row>
+      <v-col
+        cols="12"
+        md="8"
       >
-        Quick edit
-      </v-btn>
-    </v-card-actions>
+        <slot name="before-content" />
 
-    <v-dialog
-      v-if="$auth.loggedIn && $auth.user.owner"
-      v-model="quickEdit"
-    >
-      <v-container>
-        <v-card>
-          <v-card-title class="title">
-            Edit {{ editPage.name }}
-          </v-card-title>
+        <slot />
+      </v-col>
+      <v-col
+        cols="12"
+        md="4"
+      >
+        <slot name="sidebar" />
+      </v-col>
+      <v-col
+        cols="12"
+        md="8"
+      >
+        <slot name="after-content" />
+      </v-col>
+    </v-row>
 
-          <v-divider />
+    <slot name="page-footer">
+      <v-card-actions>
+        <v-spacer />
+      </v-card-actions>
+    </slot>
 
-          <wtf-page-editor v-model="editPage" quick @saved="reload" />
-        </v-card>
-      </v-container>
-    </v-dialog>
+    <slot name="append" />
   </div>
 </template>
 
 <script>
-import moment from 'moment'
-
 export default {
   props: {
-    value: {
-      type: Object,
-      default () {
-        return {
-          _id: '',
-          name: '',
-          slug: '',
-          parent: '',
-          body: '',
-          created: new Date(),
-          edited: new Date()
-        }
-      }
-    },
     breadcrumbs: {
       type: Array,
       default: () => []
-    }
-  },
-  data () {
-    return {
-      quickEdit: false,
-      editPage: {}
-    }
-  },
-  computed: {
-    created () {
-      return moment(this.value.created).fromNow()
-    },
-    lastEdited () {
-      return moment(this.value.edited).fromNow()
-    }
-  },
-  methods: {
-    activateQuickEdit () {
-      if (this.$auth.loggedIn && this.$auth.user.owner) {
-        this.quickEdit = true
-        this.editPage = Object.assign(this.value)
-      }
-    },
-    reload (newPage) {
-      this.editPage = newPage
-      this.value = newPage
-      this.quickEdit = false
     }
   }
 }

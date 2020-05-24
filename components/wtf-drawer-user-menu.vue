@@ -11,7 +11,7 @@
         </v-list-item-subtitle>
       </v-list-item-content>
 
-      <v-btn v-if="admin" icon to='/' exact>
+      <v-btn v-if="admin" icon to="/" exact>
         <v-icon>mdi-exit-to-app</v-icon>
       </v-btn>
       <v-btn v-else icon to="/auth/logout">

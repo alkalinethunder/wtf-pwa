@@ -1,42 +1,32 @@
 <template>
   <v-form v-if="value" @submit="savePage">
-    <v-row>
-      <v-col
-        cols="12"
-        md="6"
-      >
-        <v-card-text v-if="!quick">
-          <v-text-field v-model="value.name" label="Page title" />
-        </v-card-text>
+    <v-card-text>
+      <v-textarea
+        v-if="!quick"
+        v-model="value.name"
+        class="display-1"
+        dense
+        solo
+        flat
+        rows="1"
+        auto-grow
+        label="Page title"
+        :readonly="value.system"
+      />
 
-        <Editor v-model="value.body" mode="editor" />
+      <v-select
+        v-if="!quick"
+        v-model="value.parent"
+        :items="parents"
+        label="Parent"
+        dense
+        solo
+        flat
+        :disabled="value.system"
+      />
 
-        <v-card-text>
-          <v-select
-            v-model="value.parent"
-            :items="parents"
-            label="Parent"
-          />
-        </v-card-text>
-      </v-col>
-      <v-col
-        cols="12"
-        md="6"
-      >
-        <v-card raised>
-          <v-card-subtitle>PREVIEW</v-card-subtitle>
-          <v-card-title class="display-1">
-            {{ value.name || 'Untitled Page' }}
-          </v-card-title>
-          <v-card-text v-if="value.body">
-            <wtf-renderer v-model="value.body" />
-          </v-card-text>
-          <v-card-text v-else>
-            Start typing to see a live preview of the page.
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+      <wtf-markdown-editor v-model="value.body" />
+    </v-card-text>
 
     <v-btn
       v-if="fab"
@@ -49,11 +39,27 @@
     >
       <v-icon>mdi-send</v-icon>
     </v-btn>
-    <v-card-actions v-else>
+    <v-divider v-if="!fab" />
+    <v-card-actions v-if="!fab">
+      <v-btn
+        v-if="$auth.loggedIn && $auth.user.owner && quick"
+        text
+        :to="`/admin/pages/${value._id}`"
+      >
+        Full Editor
+      </v-btn>
       <v-spacer />
+      <v-btn
+        v-if="quick"
+        text
+        @click="$emit('canceled')"
+      >
+        Cancel
+      </v-btn>
       <v-btn
         text
         type="submit"
+        color="primary"
       >
         Save
       </v-btn>
@@ -86,7 +92,8 @@ export default {
           body: '',
           created: new Date(),
           edited: new Date(),
-          parent: null
+          parent: null,
+          system: false
         }
       }
     }
@@ -102,6 +109,9 @@ export default {
     }
   },
   computed: {
+    id () {
+      return this.value._id
+    },
     saveUrl () {
       if (this.creator) {
         return '/api/pages'
@@ -110,26 +120,46 @@ export default {
       }
     }
   },
+  watch: {
+    id (newValue) {
+      this.fetchParents()
+    }
+  },
   mounted () {
-    this.$axios.get('/api/pages')
-      .then((res) => {
-        this.buildPageTree(res.data, null, 0)
-      })
+    this.fetchParents()
   },
   methods: {
     buildPageTree (pages, parent, indent) {
       for (const page of pages) {
-        if (page.parent === parent) {
-          this.parents.push({
-            value: page._id,
-            text: `${'--'.repeat(indent)} ${page.name}`
-          })
+        if (page._id === this.value._id) {
+          continue
+        }
 
-          if (pages.filter(x => x.parent === page._id).length) {
-            this.buildPageTree(pages, page._id, indent + 1)
+        if (page.parent === parent) {
+          if (!page.system) {
+            this.parents.push({
+              value: page._id,
+              text: `${'--'.repeat(indent)} ${page.name}`
+            })
+
+            if (pages.filter(x => x.parent === page._id).length) {
+              this.buildPageTree(pages, page._id, indent + 1)
+            }
           }
         }
       }
+    },
+    fetchParents () {
+      this.$axios.get('/api/pages')
+        .then((res) => {
+          this.parents = [
+            {
+              value: null,
+              text: 'No parent'
+            }
+          ]
+          this.buildPageTree(res.data, null, 0)
+        })
     },
     savePage (evt) {
       evt.preventDefault()

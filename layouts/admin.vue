@@ -26,9 +26,7 @@
 
     <v-content>
       <v-container fluid>
-        <v-card color="transparent">
-          <nuxt />
-        </v-card>
+        <nuxt />
       </v-container>
     </v-content>
   </v-app>

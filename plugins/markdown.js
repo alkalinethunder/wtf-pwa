@@ -1,8 +1,12 @@
 import Vue from 'vue'
 import mdRenderer from 'vue-markdown-renderer'
 import { component as VueCodeHighlight } from 'vue-code-highlight'
-import '~/node_modules/vue-code-highlight/themes/prism-twilight.css'
 
+import 'prismjs/themes/prism-twilight.css'
+import '~/assets/wtf-global.css'
+
+Vue.component('wtf-youtube', () => (import('~/components/wtf-youtube')))
+Vue.component('wtf-markdown-editor', async () => (await import('~/components/wtf-markdown-editor.vue')))
 Vue.component('Editor', async () => (await import('vuetify-markdown-editor')).Editor)
 Vue.component('wtf-renderer', async () => (await import('~/components/wtf-renderer.vue')))
 
@@ -34,6 +38,35 @@ Vue.use(mdRenderer, {
     table: 'v-simple-table'
   },
   mappings: {
+    link: ({ token, createElement, config, processTokens }) => {
+      if (token.href.startsWith('>')) {
+        return createElement(config.elements.routerLink, {
+          props: {
+            to: token.href.substring(1)
+          }
+        }, processTokens(token.tokens, createElement, config))
+      } else {
+        const url = new URL(token.href)
+        let id
+        if (url.hostname === 'youtu.be') {
+          id = url.pathname.substring(1)
+        } else if ((url.hostname === 'www.youtube.com' || url.hostname === 'youtube.com') && url.pathname === '/watch') {
+          id = url.searchParams.get('v')
+        } else {
+          return createElement(config.elements.link, {
+            attrs: {
+              href: token.href
+            }
+          }, processTokens(token.tokens, createElement, config))
+        }
+
+        return createElement('wtf-youtube', {
+          props: {
+            id
+          }
+        })
+      }
+    },
     code: ({ token, createElement }) => createElement(
       VueCodeHighlight,
       token.text
