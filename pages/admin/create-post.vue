@@ -21,6 +21,16 @@
           rows="1"
           auto-grow
         />
+        <v-select
+          v-model="post.category"
+          item-text="name"
+          item-value="_id"
+          dense
+          solo
+          flat
+          label="Category"
+          :items="categories"
+        />
 
         <v-textarea
           v-model="post.excerpt"
@@ -57,6 +67,7 @@ export default {
       valid: false,
       error: false,
       errorMessage: '',
+      categories: [],
       post: {
         name: '',
         body: '',
@@ -74,6 +85,15 @@ export default {
       }
       return splitTags
     }
+  },
+  mounted () {
+    this.$axios.get('/api/category')
+      .then((res) => {
+        this.categories = res.data
+        this.post.category = this.categories.find(x => x.slug === 'uncategorized')._id
+      }).catch((err) => {
+        this.$nuxt.error(err)
+      })
   },
   methods: {
     submitPost () {
