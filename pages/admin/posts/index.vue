@@ -19,7 +19,12 @@
         </v-list-item-icon>
 
         <v-list-item-content>
-          <v-list-item-title>{{ post.name }}</v-list-item-title>
+          <v-list-item-title>
+            {{ post.name }}
+            <v-chip small>
+              {{ post.category.name }}
+            </v-chip>
+          </v-list-item-title>
           <v-list-item-subtitle>{{ createdAgo(post) }}</v-list-item-subtitle>
         </v-list-item-content>
 

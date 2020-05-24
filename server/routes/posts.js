@@ -7,6 +7,7 @@ const Comment = require('../models/comment')
 
 router.get('/:slug', function (req, res) {
   Post.findOne({ slug: req.params.slug })
+    .populate('category')
     .exec(function (err, post) {
       if (err) {
         res.status(500).json({
@@ -172,7 +173,7 @@ router.post('/:slug/delete', auth.admin, function (req, res) {
 })
 
 router.get('/', function (req, res) {
-  Post.find({}).exec(function (err, posts) {
+  Post.find({}).populate('category').exec(function (err, posts) {
     if(err) {
       res.status(500).json({
         message: err.message

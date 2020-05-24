@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
+require('./category')
+
 const PostSchema = new Schema({
   name: String,
   slug: String,
@@ -9,7 +11,7 @@ const PostSchema = new Schema({
   excerpt: String,
   body: String,
   views: { type: Number, default: 0 },
-  category: { type: String, default: null },
+  category: { type: Schema.Types.ObjectId, ref: 'category', default: null },
   tags: [{ type: String }],
   featuredUrl: { type: String, required: false, default: null }
 })

@@ -40,6 +40,7 @@ async function start (siteSettings) {
   const PageRouter = require('./routes/page')
   const ThemeRouter = require('./routes/theme')
   const MenuRouter = require('./routes/menu')
+  const CategoryRouter = require('./routes/category')
 
   await nuxt.ready()
   // Build only in dev mode
@@ -61,6 +62,17 @@ async function start (siteSettings) {
   app.use('/api/page', PageRouter)
   app.use('/api/theme', ThemeRouter)
   app.use('/api/menu', MenuRouter)
+  app.use('/api/category', CategoryRouter)
+
+  app.use(function (req, res, next) {
+    if (req.path.startsWith('/api')) {
+      res.status(404).json({
+        message: 'Requested endpont was not found.'
+      })
+    } else {
+      return next()
+    }
+  })
 
   // Give nuxt middle`ware to express
   app.use(nuxt.render)
@@ -140,11 +152,52 @@ async function ensureSystemPage(name, slug, parent, body) {
   return existingPage
 }
 
+async function ensureSystemCategory(name, slug) {
+  const Category = require('./models/category')
+
+  const existingCategory = await Category.findOne({
+    name,
+    slug
+  })
+
+  if (existingCategory) {
+    if (!existingCategory.system) {
+      existingCategory.system = true
+      return await existingCategory.save()
+    } else {
+      return existingCategory
+    }
+  } else {
+    const category = new Category({
+      name,
+      slug,
+      system: true
+    })
+    return await category.save()
+  }
+}
+
+async function categorizeOldPosts (category) {
+  const Post = require('./models/post')
+
+  const posts = await Post.find({})
+
+  for (const post of posts) {
+    if (!post.category) {
+      post.category = category
+      await post.save()
+    }
+  }
+}
+
 async function configureDatabase() {
   await mongoose.connect('mongodb://localhost/wtf', { useUnifiedTopology: true, useNewUrlParser: true })
 
   const homepage = await ensureSystemPage('Home', '<index>', null, 'Edit this page in **Administration**.')
   const blog = await ensureSystemPage('Blog', 'blog', null, 'Edit this page in **Administration**.')
+
+  const uncategorized = await ensureSystemCategory('Uncategorized', 'uncategorized')
+  await categorizeOldPosts(uncategorized)
 
   const sitesettings = await ensureSiteSettingsExist()
   return sitesettings
