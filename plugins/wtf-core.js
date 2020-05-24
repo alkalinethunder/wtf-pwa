@@ -7,6 +7,8 @@ Vue.component('wtf-drawer-user-menu', () => (import('~/components/wtf-drawer-use
 Vue.component('wtf-user-menu', () => (import('~/components/wtf-user-menu.vue')))
 Vue.component('wtf-socials', () => (import('~/components/wtf-socials.vue')))
 
+Vue.component('wtf-post-card', () => (import('~/components/wtf-post-card.vue')))
+
 Vue.component('wtf-comment', () => import('~/components/wtf-comment.vue'))
 Vue.component('wtf-comments', () => import('~/components/wtf-comments.vue'))
 
