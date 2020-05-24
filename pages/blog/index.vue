@@ -10,7 +10,7 @@
       </template>
 
       <div v-if="posts.length">
-        <wtf-post-card v-for="post of posts" :post="post" :key="post._id" />
+        <wtf-post-card v-for="post of posts" :key="post._id" :post="post" />
       </div>
       <div v-else>
         <v-card outlined class="text-center">

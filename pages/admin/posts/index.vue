@@ -47,7 +47,7 @@
             </v-list-item>
 
             <v-list-item @click="showDeleteDialog(post)">
-              <v-list-item-content>\
+              <v-list-item-content>
                 <v-list-item-title>Delete</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
@@ -57,7 +57,9 @@
     </v-list>
 
     <v-card-text v-if="!posts.length" class="text-center">
-      <h1 class="headline">No posts here...</h1>
+      <h1 class="headline">
+        No posts here...
+      </h1>
       <p>There are no posts to display on this page. Your blog is empty.</p>
       <v-btn color="primary" to="/admin/create-post">
         Create your first post!

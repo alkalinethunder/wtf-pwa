@@ -1,23 +1,20 @@
+const fs = require('fs')
+const path = require('path')
 const express = require('express')
 const consola = require('consola')
 const { Nuxt, Builder } = require('nuxt')
 const app = express()
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
+const mongoose = require('mongoose')
+const bodyParser = require('body-parser')
+const config = require('../nuxt.config.js')
 const SiteSetting = require('./models/sitesetting')
-const fs = require('fs')
-const path = require('path')
-
 const themesPath = path.join(__dirname, '..', 'themes')
 const themePath = path.join(themesPath, 'material')
 const themeManifestPath = path.join(themePath, 'manifest.json')
 
 require('dotenv').config()
 
-
-
 // Import and Set Nuxt.js options
-const config = require('../nuxt.config.js')
 config.dev = process.env.NODE_ENV !== 'production'
 
 // read and parse the theme manifest.
@@ -54,10 +51,10 @@ async function start (siteSettings) {
   app.use(bodyParser())
 
   // give API routes so we have a backend.
-  app.use('/api/posts', postsRoute);
+  app.use('/api/posts', postsRoute)
   app.use('/api/setup', setupRouter)
-  app.use('/api/projects', projectsRoute);
-  app.use('/api/users', usersRoute);
+  app.use('/api/projects', projectsRoute)
+  app.use('/api/users', usersRoute)
   app.use('/api/auth', authRoute)
   app.use('/api/pages', PagesRouter)
   app.use('/api/page', PageRouter)
@@ -110,9 +107,9 @@ async function createDefaultMenuItems () {
 
   const systemPages = await Page.find({ system: true })
 
-  for (let page of pages) {
+  for (const page of systemPages) {
     const exists = await MenuItem.findOne({ name: page.Name, page: page._id, type: 'page' })
-    if  (!exists) {
+    if (!exists) {
       const menuItem = new MenuItem({
         name: page.name,
         slot: 'primary',
@@ -125,17 +122,17 @@ async function createDefaultMenuItems () {
 }
 
 async function ensureSiteSettingsExist () {
-  const sitesettings = SiteSetting.findOne({})
+  const sitesettings = await SiteSetting.findOne({})
   if (sitesettings) {
     return sitesettings
   } else {
-    const newSettings = new siteSetting({})
+    const newSettings = new SiteSetting({})
     await createDefaultMenuItems()
     return await newSettings.save()
   }
 }
 
-async function ensureSystemPage(name, slug, parent, body) {
+async function ensureSystemPage (name, slug, parent, body) {
   const Page = require('./models/page')
 
   const existingPage = await Page.findOne({
@@ -171,7 +168,7 @@ async function ensureSystemPage(name, slug, parent, body) {
   return existingPage
 }
 
-async function ensureSystemCategory(name, slug) {
+async function ensureSystemCategory (name, slug) {
   const Category = require('./models/category')
 
   const existingCategory = await Category.findOne({
@@ -209,11 +206,11 @@ async function categorizeOldPosts (category) {
   }
 }
 
-async function configureDatabase() {
+async function configureDatabase () {
   await mongoose.connect('mongodb://localhost/wtf', { useUnifiedTopology: true, useNewUrlParser: true })
 
-  const homepage = await ensureSystemPage('Home', '<index>', null, 'Edit this page in **Administration**.')
-  const blog = await ensureSystemPage('Blog', 'blog', null, 'Edit this page in **Administration**.')
+  await ensureSystemPage('Home', '<index>', null, 'Edit this page in **Administration**.')
+  await ensureSystemPage('Blog', 'blog', null, 'Edit this page in **Administration**.')
 
   const uncategorized = await ensureSystemCategory('Uncategorized', 'uncategorized')
   await categorizeOldPosts(uncategorized)

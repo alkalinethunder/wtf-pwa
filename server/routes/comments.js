@@ -1,7 +1,6 @@
 const express = require('express')
 const auth = require('../middleware/auth')
 const Post = require('../models/post')
-const User = require('../models/user')
 const Comment = require('../models/comment')
 
 const router = express.Router()
@@ -21,27 +20,24 @@ router.post('/', auth.authenticate, async function (req, res) {
   try {
     const { type, commentFor, body } = req.body
 
-    switch (type) {
-      case 'post':
-        const postExists = await Post.findById(commentFor)
-        if (!postExists) {
-          return res.status(404).json({
-            message: 'Specified post does not exist.'
-          })
-        }
-        break;
-      case 'reply':
-        const existingComment = await Comment.findById(commentFor)
-        if (!existingComment) {
-          return res.status(404).json({
-            message: 'Specified comment not found.'
-          })
-        }
-        break;
-      default:
-        return res.status(400).json({
-          message: 'Invalid comment type.'
+    if (type === 'post') {
+      const postExists = await Post.findById(commentFor)
+      if (!postExists) {
+        return res.status(404).json({
+          message: 'Specified post does not exist.'
         })
+      }
+    } else if (type === 'reply') {
+      const existingComment = await Comment.findById(commentFor)
+      if (!existingComment) {
+        return res.status(404).json({
+          message: 'Specified comment not found.'
+        })
+      }
+    } else {
+      return res.status(400).json({
+        message: 'Invalid comment type.'
+      })
     }
 
     if (body && body.trim()) {

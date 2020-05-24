@@ -169,7 +169,13 @@
                 wtf-pwa | Developed by Michael VanOverbeek.
               </p>
               <v-flex class="d-flex flex-row align-center ml-auto mr-auto">
-                <v-btn small text v-if="settings.showDeveloperCredit && settings.developerGitHubLinkInCredit" href="https://github.com/alkalinethunder/wtf-pwa" class="caption">
+                <v-btn
+                  v-if="settings.showDeveloperCredit && settings.developerGitHubLinkInCredit"
+                  small
+                  text
+                  href="https://github.com/alkalinethunder/wtf-pwa"
+                  class="caption"
+                >
                   Source code
                 </v-btn>
                 <v-btn

@@ -13,7 +13,7 @@
         </p>
       </template>
 
-      <wtf-post-card v-for="post of posts" :post="post" :key="post._id" />
+      <wtf-post-card v-for="post of posts" :key="post._id" :post="post" />
     </wtf-page-viewer>
   </div>
 </template>

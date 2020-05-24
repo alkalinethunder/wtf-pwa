@@ -13,7 +13,7 @@
 
       <p class="body-1">
         {{ text }}
-        <br />
+        <br>
         <a v-if="less !== comment.body" @click="showMore = !showMore">
           {{ showMoreText }}
         </a>
@@ -33,15 +33,15 @@ import moment from 'moment'
 import truncate from 'truncate'
 
 export default {
-  data () {
-    return {
-      showMore: false
-    }
-  },
   props: {
     comment: {
       type: Object,
       default: () => {}
+    }
+  },
+  data () {
+    return {
+      showMore: false
     }
   },
   computed: {

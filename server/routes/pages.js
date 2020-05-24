@@ -14,7 +14,7 @@ const reservedNames = [
 ]
 
 function moveChildren (page, moveTo, callback) {
-  function findNewHome(moveTo, callback) {
+  function findNewHome (moveTo, callback) {
     if (moveTo) {
       if (moveTo === page._id) {
         callback(new Error('Attempted to move children to where they already are.'), null)
@@ -229,7 +229,6 @@ router.post('/delete/:id', auth.owner, function (req, res) {
       })
     }
   })
-
 })
 
 router.get('/:id', function (req, res) {
