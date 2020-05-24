@@ -28,6 +28,7 @@
     "nuxt": "^2.0.0",
     "prismjs": "^1.20.0",
     "slugify": "^1.4.0",
+    "truncate": "^2.1.0",
     "vue-code-highlight": "^0.7.4",
     "vue-markdown-renderer": "^0.2.1",
     "vuetify-markdown-editor": "^2.0.2",

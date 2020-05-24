@@ -2,25 +2,26 @@
   <div>
     <div v-if="postId">
       <v-form v-if="$auth.loggedIn" @submit="postComment">
-        <v-card dense>
-          <v-card-text>
+        <v-flex class="d-flex flex-row mb-6 mt-4">
+          <v-avatar color="primary" />
+          <v-flex class="d-flex flex-column justify-start ml-3">
             <v-textarea
               v-model="newComment"
               label="Post a new comment"
-              dense
-              solo
-              flat
-              rows="2"
+              rows="1"
               auto-grow
             />
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer />
-            <v-btn text type="submit" :disabled="!commentValid">
-              Post
-            </v-btn>
-          </v-card-actions>
-        </v-card>
+
+            <v-flex v-if="newComment.length" class="d-flex flex-row align-center">
+              <v-btn color="primary" type="submit" :disabled="!commentValid">
+                Post
+              </v-btn>
+              <v-btn text @click="newComment = ''">
+                Cancel
+              </v-btn>
+            </v-flex>
+          </v-flex>
+        </v-flex>
       </v-form>
     </div>
     <div v-if="value && value.length">
