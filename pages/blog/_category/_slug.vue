@@ -21,7 +21,7 @@
           Comments
         </h4>
 
-        <wtf-comments v-model="comments" :post-id="post.slug" />
+        <wtf-comments v-model="comments" :post-id="post._id" />
       </template>
 
       <template slot="sidebar">
@@ -91,7 +91,7 @@ export default {
       },
       recent: [],
       commentBody: '',
-      comments: []
+      comments: {}
     }
   },
   computed: {
@@ -120,13 +120,9 @@ export default {
               this.recent = sortedByDate
             }
 
-            this.$axios.get(`/api/posts/${this.post.slug}/comments`)
+            this.$axios.get(`/api/comments/${this.post._id}`)
               .then((res) => {
-                this.comments = res.data.sort((a, b) => {
-                  const aDate = Date.parse(a.posted)
-                  const bDate = Date.parse(b.posted)
-                  return bDate - aDate
-                })
+                this.comments = res.data
               })
           })
       })

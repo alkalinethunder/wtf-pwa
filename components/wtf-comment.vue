@@ -1,5 +1,5 @@
 <template>
-  <v-flex class="d-flex flex-row mb-4">
+  <v-flex class="d-flex flex-row mb-2 mt-2">
     <v-avatar color="primary" />
     <v-flex class="d-flex flex-column ml-3">
       <v-flex class="d-flex flex-row align-center">
@@ -18,6 +18,12 @@
           {{ showMoreText }}
         </a>
       </p>
+
+      <v-flex class="d-flex flex-row align-center">
+        <slot name="comment-actions" />
+      </v-flex>
+
+      <slot />
     </v-flex>
   </v-flex>
 </template>

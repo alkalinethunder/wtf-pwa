@@ -41,6 +41,7 @@ async function start (siteSettings) {
   const ThemeRouter = require('./routes/theme')
   const MenuRouter = require('./routes/menu')
   const CategoryRouter = require('./routes/category')
+  const CommentsRouter = require('./routes/comments')
 
   await nuxt.ready()
   // Build only in dev mode
@@ -63,6 +64,7 @@ async function start (siteSettings) {
   app.use('/api/theme', ThemeRouter)
   app.use('/api/menu', MenuRouter)
   app.use('/api/category', CategoryRouter)
+  app.use('/api/comments', CommentsRouter)
 
   app.use(function (req, res, next) {
     if (req.path.startsWith('/api')) {
