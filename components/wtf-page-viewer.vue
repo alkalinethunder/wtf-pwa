@@ -1,26 +1,48 @@
 <template>
   <div>
-    <slot name="breadcrumbs">
-      <v-breadcrumbs v-if="breadcrumbs && breadcrumbs.length" :items="breadcrumbs" />
-    </slot>
+    <slot name="append" />
 
-    <slot name="before" />
+    <v-flex class="d-flex flex-row justify-start align-center">
+      <v-flex class="d-flex flex-column mr-auto">
+        <h1 class="display-1">
+          <slot name="title" />
+        </h1>
+        <h2 class="subtitle-1 text--secondary">
+          <slot name="page-information" />
+        </h2>
+      </v-flex>
+      <slot name="breadcrumbs">
+        <v-breadcrumbs v-if="breadcrumbs && breadcrumbs.length" :items="breadcrumbs" />
+      </slot>
+      <slot name="page-actions" />
+    </v-flex>
 
-    <h1 class="display-1">
-      <slot name="title" />
-    </h1>
+    <v-row>
+      <v-col
+        cols="12"
+        md="8"
+      >
+        <slot name="before-content" />
 
-    <slot name="before-content" />
-
-    <slot />
-
-    <slot name="after-content" />
+        <slot />
+      </v-col>
+      <v-col
+        cols="12"
+        md="4"
+      >
+        <slot name="sidebar" />
+      </v-col>
+      <v-col
+        cols="12"
+        md="8"
+      >
+        <slot name="after-content" />
+      </v-col>
+    </v-row>
 
     <slot name="page-footer">
       <v-card-actions>
-        <slot name="page-information" />
         <v-spacer />
-        <slot name="page-actions" />
       </v-card-actions>
     </slot>
 

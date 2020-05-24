@@ -1,12 +1,12 @@
 <template>
-  <v-app color="primary">
+  <v-app>
     <v-navigation-drawer
       v-model="drawer"
       temporary
-      :color="themeBackground"
       width="100%"
       dark
       app
+      :color="themeBackground"
       class="d-sm-none"
     >
       <v-list-item>
@@ -31,10 +31,10 @@
 
     <v-app-bar
       fixed
-      :color="themeBackground"
       dark
       flat
       class="d-xs-block d-sm-none"
+      :color="themeBackground"
     >
       <v-app-bar-nav-icon @click="drawer = !drawer" />
       <v-flex class="d-flex flex-column ml-3">
@@ -49,8 +49,8 @@
       class="d-none d-md-block"
       app
       inverted-scroll
-      :color="themeBackground"
       dark
+      :color="themeBackground"
     >
       <v-flex class="d-flex flex-column ml-3">
         <v-toolbar-title>{{ settings.name }}</v-toolbar-title>
@@ -65,7 +65,6 @@
       <wtf-user-menu />
     </v-app-bar>
     <v-content :class="themeBackground">
-      <v-spacer class="mt-12 d-xs-block" />
       <v-container>
         <v-app-bar
           flat

@@ -4,13 +4,8 @@
       <template slot="title">
         {{ post.name }}
       </template>
-      <template slot="before-content">
-        <h2 class="subtitle-2 text--secondary">
-          Posted {{ created }} by {{ author }} &bull;
-          <v-chip :to="`/blog/${post.category.slug}`" small>
-            {{ post.category.name }}
-          </v-chip>
-        </h2>
+      <template slot="page-information">
+        Posted {{ created }} by {{ author }}
       </template>
 
       <v-img v-if="post.featuredUrl" :src="post.featuredUrl" />
@@ -27,6 +22,46 @@
         </h4>
 
         <wtf-comments v-model="comments" :post-id="post.slug" />
+      </template>
+
+      <template slot="sidebar">
+        <v-flex class="d-flex flex-row mb-6">
+          <v-avatar color="primary" />
+
+          <v-flex class="d-flex flex-column ml-3">
+            <span class="overline">
+              About the author
+            </span>
+            <span class="subtitle-1 mb-4">
+              {{ post.author.displayName || post.author.username }}
+            </span>
+
+            <wtf-renderer v-if="post.author.about" v-model="post.author.about" />
+            <p v-else class="body-2">
+              This user has nothing to say about themselves.
+            </p>
+          </v-flex>
+        </v-flex>
+
+        <v-flex class="d-flex flex-column mb-6">
+          <span class="overline">
+            Recent posts in {{ post.category.name }}
+          </span>
+
+          <v-list dense>
+            <v-list-item v-for="recentPost of recent" :key="recentPost._id" :to="`/blog/${recentPost.category.slug}/${recentPost.slug}`">
+              <v-list-item-content>
+                <v-list-item-title>
+                  {{ recentPost.name }}
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+
+          <v-btn text :to="`/blog/${post.category.slug}`" class="transparent mr-auto">
+            View all
+          </v-btn>
+        </v-flex>
       </template>
     </wtf-page-viewer>
   </div>
@@ -54,6 +89,7 @@ export default {
         },
         views: 0
       },
+      recent: [],
       commentBody: '',
       comments: []
     }
@@ -70,13 +106,28 @@ export default {
     this.$axios.get(`/api/posts/${this.$route.params.slug}`)
       .then((res) => {
         this.post = res.data
-        this.$axios.get(`/api/posts/${this.post.slug}/comments`)
+        this.$axios.get(`/api/category/${this.post.category.slug}`)
           .then((res) => {
-            this.comments = res.data.sort((a, b) => {
+            const sortedByDate = res.data.posts.filter(p => p._id !== this.post._id).sort((a, b) => {
               const aDate = Date.parse(a.posted)
               const bDate = Date.parse(b.posted)
               return bDate - aDate
             })
+
+            if (sortedByDate.length > 5) {
+              this.recent = sortedByDate.slice(0, 5)
+            } else {
+              this.recent = sortedByDate
+            }
+
+            this.$axios.get(`/api/posts/${this.post.slug}/comments`)
+              .then((res) => {
+                this.comments = res.data.sort((a, b) => {
+                  const aDate = Date.parse(a.posted)
+                  const bDate = Date.parse(b.posted)
+                  return bDate - aDate
+                })
+              })
           })
       })
       .catch((err) => {
