@@ -1,105 +1,39 @@
 <template>
   <div>
+    <slot name="breadcrumbs">
+      <v-breadcrumbs v-if="breadcrumbs && breadcrumbs.length" :items="breadcrumbs" />
+    </slot>
+
+    <slot name="before" />
+
     <h1 class="display-1">
-      {{ value.name }}
+      <slot name="title" />
     </h1>
 
-    <p class="body-2">
-      <wtf-renderer
-        v-if="value.body"
-        v-model="value.body"
-      />
-    </p>
+    <slot name="before-content" />
 
-    <v-divider v-if="value.created && value.edited" />
-    <v-card-actions v-if="value.created && value.edited">
-      <v-breadcrumbs :items="breadcrumbs" />
-      <v-spacer />
-      <span class="overline">
-        Created {{ created }} - Last edited {{ lastEdited }}
-      </span>
-      <v-btn
-        v-if="$auth.loggedIn && $auth.user.owner"
-        text
-        @click="activateQuickEdit"
-      >
-        Quick edit
-      </v-btn>
-    </v-card-actions>
+    <slot />
 
-    <v-dialog
-      v-if="$auth.loggedIn && $auth.user.owner"
-      v-model="quickEdit"
-      persistent
-      width="1200"
-    >
-      <v-card>
-        <v-card-title class="title">
-          Edit {{ editPage.name }}
-        </v-card-title>
+    <slot name="after-content" />
 
-        <v-divider />
+    <slot name="page-footer">
+      <v-card-actions>
+        <slot name="page-information" />
+        <v-spacer />
+        <slot name="page-actions" />
+      </v-card-actions>
+    </slot>
 
-        <wtf-page-editor
-          v-model="editPage"
-          quick
-          @saved="reload"
-          @canceled="quickEdit = false"
-        />
-      </v-card>
-    </v-dialog>
+    <slot name="append" />
   </div>
 </template>
 
 <script>
-import moment from 'moment'
-
 export default {
   props: {
-    value: {
-      type: Object,
-      default () {
-        return {
-          _id: '',
-          name: '',
-          slug: '',
-          parent: '',
-          body: '',
-          created: new Date(),
-          edited: new Date()
-        }
-      }
-    },
     breadcrumbs: {
       type: Array,
       default: () => []
-    }
-  },
-  data () {
-    return {
-      quickEdit: false,
-      editPage: {}
-    }
-  },
-  computed: {
-    created () {
-      return moment(this.value.created).fromNow()
-    },
-    lastEdited () {
-      return moment(this.value.edited).fromNow()
-    }
-  },
-  methods: {
-    activateQuickEdit () {
-      if (this.$auth.loggedIn && this.$auth.user.owner) {
-        this.quickEdit = true
-        this.editPage = Object.assign(this.value)
-      }
-    },
-    reload (newPage) {
-      this.editPage = newPage
-      this.quickEdit = false
-      this.$emit('input', newPage)
     }
   }
 }
