@@ -63,7 +63,7 @@ router.get('/:name', async function (req, res) {
   try {
     const category = await Category.findOne({ slug: req.params.name })
     if (category) {
-      const posts = await Post.find({ category }).populate('category')
+      const posts = await Post.find({ category }).populate('category').populate('author')
       res.status(200).json({
         category,
         posts

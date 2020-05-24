@@ -4,10 +4,12 @@ const slugify = require('slugify')
 const Post = require('../models/post');
 const auth = require('../middleware/auth')
 const Comment = require('../models/comment')
+const Category = require('../models/category')
 
 router.get('/:slug', function (req, res) {
   Post.findOne({ slug: req.params.slug })
     .populate('category')
+    .populate('author')
     .exec(function (err, post) {
       if (err) {
         res.status(500).json({
@@ -173,7 +175,7 @@ router.post('/:slug/delete', auth.admin, function (req, res) {
 })
 
 router.get('/', function (req, res) {
-  Post.find({}).populate('category').exec(function (err, posts) {
+  Post.find({}).populate('category').populate('author').exec(function (err, posts) {
     if(err) {
       res.status(500).json({
         message: err.message
@@ -184,28 +186,63 @@ router.get('/', function (req, res) {
   })
 })
 
-router.post('/', auth.editor, function (req, res) {
-  const newPost = new Post({
-    name: req.body.name,
-    slug: slugify(req.body.name),
-    excerpt: req.body.excerpt,
-    body: req.body.body,
-    views: 0,
-    created: new Date(),
-    featuredUrl: req.body.featuredUrl,
-    tags: req.body.tags,
-    category: req.body.category
-  })
+router.post('/', auth.editor, async function (req, res) {
+  try {
+    const name = req.body.name ? req.body.name.trim() : null
+    const excerpt = req.body.excerpt ? req.body.excerpt.trim() : ''
+    const body = req.body.body ? req.body.body.trim() : ''
+    const categoryId = req.body.category
+    const slug = slugify(name)
 
-  newPost.save(function (err, post) {
-    if (err) {
+    if (!name) {
       res.status(400).json({
-        message: err.message
+        message: 'A non-empty name is required.'
+      })
+    } else if (!categoryId) {
+      res.status(400).json({
+        message: 'A category ID is required.'
       })
     } else {
-      res.status(200).json(post);
+      const category = await Category.findById(categoryId)
+      if (category) {
+        const existingPost = await Post.findOne({
+          $or: [
+            { category, name },
+            { category, slug }
+          ]
+        })
+
+        if (existingPost) {
+          res.status(400).json({
+            message: 'A post with that name already exists in the category.'
+          })
+        } else {
+          const post = new Post({
+            views: 0,
+            created: new Date(),
+            author: req.user,
+            category,
+            name,
+            slug,
+            excerpt,
+            body
+          })
+
+          const saved = await post.save()
+
+          res.status(200).json(saved.toJSON())
+        }
+      } else {
+        res.status(404).json({
+          message: 'Specified category was not found.'
+        })
+      }
     }
-  })
+  } catch (err) {
+    res.status(500).json({
+      message: err.message
+    })
+  }
 })
 
 module.exports = router

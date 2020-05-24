@@ -85,6 +85,23 @@ async function start (siteSettings) {
   })
 }
 
+async function assignPostAuthors () {
+  const Post = require('./models/post')
+  const User = require('./models/user')
+
+  const owner = await User.findOne({ owner: true })
+
+  if (owner) {
+    const posts = await Post.find({})
+    for (const post of posts) {
+      if (!post.author) {
+        post.author = owner
+        await post.save()
+      }
+    }
+  }
+}
+
 async function createDefaultMenuItems () {
   const MenuItem = require('./models/menuitem')
   const Page = require('./models/page')
@@ -198,6 +215,7 @@ async function configureDatabase() {
 
   const uncategorized = await ensureSystemCategory('Uncategorized', 'uncategorized')
   await categorizeOldPosts(uncategorized)
+  await assignPostAuthors()
 
   const sitesettings = await ensureSiteSettingsExist()
   return sitesettings
