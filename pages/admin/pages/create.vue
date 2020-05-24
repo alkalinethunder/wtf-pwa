@@ -4,7 +4,9 @@
       Create page
     </v-card-title>
 
-    <wtf-page-editor v-model="page" fab creator @saved="created" />
+    <v-card>
+      <wtf-page-editor v-model="page" fab creator @saved="created" />
+    </v-card>
   </div>
 </template>
 

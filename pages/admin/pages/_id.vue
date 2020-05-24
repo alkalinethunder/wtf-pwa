@@ -5,9 +5,7 @@
     </v-card-title>
 
     <v-card v-if="page">
-      <v-card-text>
-        <wtf-page-editor v-model="page" fab @saved="goBack" />
-      </v-card-text>
+      <wtf-page-editor v-model="page" fab @saved="goBack" />
     </v-card>
   </div>
 </template>

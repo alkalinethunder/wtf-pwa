@@ -2,20 +2,21 @@
   <v-form v-if="value" @submit="savePage">
     <v-card-text>
       <v-textarea
-        v-model="value.name"
         v-if="!quick"
+        v-model="value.name"
         class="display-1"
         dense
         solo
         flat
         rows="1"
         auto-grow
+        label="Page title"
         :readonly="value.system"
       />
 
       <v-select
-        v-model="value.parent"
         v-if="!quick"
+        v-model="value.parent"
         :items="parents"
         label="Parent"
         dense
