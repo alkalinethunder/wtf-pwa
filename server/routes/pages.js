@@ -292,7 +292,7 @@ router.post('/:id', auth.owner, async function (req, res) {
       const trimmed = name.trim()
       const slug = slugify(trimmed).toLowerCase()
 
-      if (slug !== page.slug) {
+      if (trimmed !== page.name) {
         if (page.system) {
           return res.status(403).json({
             message: 'System pages cannot be renamed.'
