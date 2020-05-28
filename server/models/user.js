@@ -18,7 +18,8 @@ const UserSchema = new Schema({
   moderator: { type: Boolean, default: false },
   banned: { type: Boolean, default: false },
   bannedDate: { type: Date, default: null },
-  owner: { type: Boolean, default: false }
+  owner: { type: Boolean, default: false },
+  content: { type: String, required: true, default: '' }
 })
 
  UserSchema.methods.setPassword = function (password) {

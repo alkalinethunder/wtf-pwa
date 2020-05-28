@@ -128,4 +128,35 @@ router.get('/id/:id', function (req, res) {
   })
 })
 
+router.post('/profile/:id', auth.authenticate, async function (req, res) {
+  try {
+    const user = await User.findById(req.params.id)
+
+    if (user) {
+      const hasPermission = (req.user._id === user._id || req.user.owner || req.user.admin)
+      if (hasPermission) {
+        user.displayName = req.body.displayName || ''
+        user.about = req.body.about || ''
+        user.content=  req.body.content || ''
+
+        const saved = await user.save()
+
+        res.status(200).json(saved)
+      } else {
+        res.status(401).json({
+          message: "Only owners, administrators, or the user themselves can edit a user's profile."
+        })
+      }
+    } else {
+      return res.status(404).json({
+        message: 'User not found.'
+      })
+    }
+  } catch (err) {
+    res.status(500).json({
+      message: err.message
+    })
+  }
+})
+
 module.exports = router

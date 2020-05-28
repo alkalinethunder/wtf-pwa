@@ -97,9 +97,7 @@
           </template>
         </v-app-bar>
         <v-sheet>
-          <v-container>
-            <nuxt />
-          </v-container>
+          <nuxt />
 
           <v-container>
             <v-row>
