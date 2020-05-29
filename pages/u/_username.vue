@@ -2,7 +2,7 @@
   <div>
     <wtf-page-viewer>
       <template slot="prepend">
-        <v-responsive :aspect-ratio="64/9" class="primary">
+        <v-responsive :aspect-ratio="48/9" class="primary">
           <v-img class="wtf-cover" />
 
           <v-flex class="d-flex flex-row justify-end mt-2 mr-2 align-center">
