@@ -67,6 +67,12 @@
 
 <script>
 export default {
+  props: {
+    permanent: {
+      type: Boolean,
+      default: () => false
+    }
+  },
   data () {
     return {
       username: '',
@@ -75,6 +81,11 @@ export default {
       error: '',
       usernameError: '',
       passwordError: ''
+    }
+  },
+  mounted () {
+    if (this.permanent) {
+      this.loginActive = true
     }
   },
   methods: {
@@ -98,7 +109,12 @@ export default {
         }).then(() => {
           this.username = ''
           this.password = ''
-          this.loginActive = false
+
+          if (this.permanent) {
+            this.$emit('success')
+          } else {
+            this.loginActive = false
+          }
         }).catch((err) => {
           const statusCodeError = 'Request failed with status code '
           if (err.message.startsWith(statusCodeError)) {
@@ -116,7 +132,11 @@ export default {
       this.error = ''
       this.usernameError = ''
       this.passwordError = ''
-      this.loginActive = false
+      if (this.permanent) {
+        this.$emit('cancelled')
+      } else {
+        this.loginActive = false
+      }
     }
   }
 }
