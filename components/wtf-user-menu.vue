@@ -3,7 +3,7 @@
     <v-menu v-if="$auth.loggedIn" offset-y>
       <template v-slot:activator="{ on }">
         <v-list-item nav class="transparent d-flex justify-start align-center flex-row" v-on="on">
-          <v-avatar color="primary" size="32" />
+          <wtf-avatar :user="$auth.user" />
           <v-flex class="d-flex flex-column ml-3 mr-3">
             <span class="subtitle-2">
               {{ $auth.user.displayName || $auth.user.username }}

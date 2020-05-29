@@ -3,7 +3,7 @@
     <div v-if="postId">
       <v-form v-if="$auth.loggedIn" @submit="postComment">
         <v-flex class="d-flex flex-row mb-4 mt-4">
-          <v-avatar color="primary" />
+          <wtf-avatar :user="$auth.user" />
           <v-flex class="d-flex flex-column justify-start ml-3">
             <v-textarea
               v-model="newComment"
@@ -39,7 +39,7 @@
             @submit="postComment"
           >
             <v-flex class="d-flex flex-row mb-6 mt-4">
-              <v-avatar color="primary" />
+              <wtf-avatar :user="$auth.user" />
               <v-flex class="d-flex flex-column justify-start ml-3">
                 <v-textarea
                   v-model="newReply"

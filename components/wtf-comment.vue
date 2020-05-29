@@ -1,6 +1,6 @@
 <template>
   <v-flex class="d-flex flex-row mb-2 mt-2">
-    <v-avatar color="primary" />
+    <wtf-avatar :user="comment.author" />
     <v-flex class="d-flex flex-column ml-3">
       <v-flex class="d-flex flex-row align-center">
         <nuxt-link

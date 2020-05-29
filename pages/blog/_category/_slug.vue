@@ -32,7 +32,7 @@
 
       <template slot="sidebar">
         <v-flex class="d-flex flex-row mb-6">
-          <v-avatar color="primary" />
+          <wtf-avatar :user="post.author" />
 
           <v-flex class="d-flex flex-column ml-3">
             <span class="overline">

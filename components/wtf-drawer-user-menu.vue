@@ -1,7 +1,8 @@
 <template>
   <div>
     <v-list-item v-if="$auth.loggedIn" two-line>
-      <v-list-item-content>
+      <wtf-avatar :user="$auth.user" />
+      <v-list-item-content class="ml-3">
         <v-list-item-title>{{ displayname }}</v-list-item-title>
         <v-list-item-subtitle v-if="admin">
           Administrating
