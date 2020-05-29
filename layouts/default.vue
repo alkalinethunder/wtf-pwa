@@ -30,7 +30,7 @@
     </v-navigation-drawer>
 
     <v-app-bar
-      fixed
+      app
       dark
       flat
       class="d-xs-block d-sm-none"
@@ -45,26 +45,7 @@
       </v-flex>
     </v-app-bar>
 
-    <v-app-bar
-      class="d-none d-md-block"
-      app
-      inverted-scroll
-      dark
-      :color="themeBackground"
-    >
-      <v-flex class="d-flex flex-column ml-3">
-        <v-toolbar-title>{{ settings.name }}</v-toolbar-title>
-        <span class="caption">
-          {{ settings.description }}
-        </span>
-      </v-flex>
-      <wtf-navigation />
-      <v-spacer />
-      <wtf-socials />
-      <wtf-dark-mode-toggle />
-      <wtf-user-menu />
-    </v-app-bar>
-    <v-content :class="themeBackground">
+    <v-content app :class="themeBackground">
       <v-container>
         <v-app-bar
           flat
