@@ -3,9 +3,12 @@
     <v-avatar color="primary" />
     <v-flex class="d-flex flex-column ml-3">
       <v-flex class="d-flex flex-row align-center">
-        <h4 class="subtitle-2">
+        <nuxt-link
+          class="subtitle-2 text--primary wtf-link"
+          :to="`/u/${comment.author.username}`"
+        >
           {{ displayname }}
-        </h4>
+        </nuxt-link>
         <small class="caption ml-1">
           {{ timeAgo }}
         </small>

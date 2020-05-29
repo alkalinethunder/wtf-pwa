@@ -1,0 +1,7 @@
+.wtf-link {
+  text-decoration: none;
+}
+
+.wtf-link:hover {
+  text-decoration: underline;
+}
