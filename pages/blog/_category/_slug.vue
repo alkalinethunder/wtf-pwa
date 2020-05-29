@@ -40,6 +40,13 @@
             <p v-else class="body-2">
               This user has nothing to say about themselves.
             </p>
+
+            <v-btn
+              text
+              :to="`/u/${post.author.username}`"
+            >
+              View profile
+            </v-btn>
           </v-flex>
         </v-flex>
 
