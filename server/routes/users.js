@@ -1,3 +1,4 @@
+const passwordStrength = require('check-password-strength')
 const express = require('express')
 const router = express.Router()
 const auth = require('../middleware/auth')
@@ -27,6 +28,12 @@ router.post('/', function (req, res) {
   if (reqBody.username) {
     if (reqBody.email && reqBody.email === reqBody.emailConfirm) {
       if (reqBody.password && reqBody.password === reqBody.passwordConfirm) {
+        if (passwordStrength(reqBody.password) < 2) {
+          return res.status(401).json({
+            message: 'Password is too weak.'
+          })
+        }
+
         User.findOne({
           $or: [
             {
