@@ -24,12 +24,20 @@
         <v-list-item-title>Not logged in.</v-list-item-title>
       </v-list-item-content>
 
-      <v-btn icon to="/auth/login">
-        <v-icon>mdi-login</v-icon>
-      </v-btn>
-      <v-btn icon to="/auth/register">
-        <v-icon>mdi-account-plus</v-icon>
-      </v-btn>
+      <wtf-login>
+        <template v-slot:activator="{ on }">
+          <v-btn icon v-on="on">
+            <v-icon>mdi-login</v-icon>
+          </v-btn>
+        </template>
+      </wtf-login>
+      <wtf-create-account>
+        <template v-slot:activator="{ on }">
+          <v-btn icon v-on="on">
+            <v-icon>mdi-account-plus</v-icon>
+          </v-btn>
+        </template>
+      </wtf-create-account>
       <wtf-dark-mode-toggle />
     </v-list-item>
   </div>
