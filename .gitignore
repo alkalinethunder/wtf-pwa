@@ -1,3 +1,6 @@
+# CMS uses uploads/ to store user-uploaded static content.
+uploads/
+
 # Created by .ignore support plugin (hsz.mobi)
 ### Node template
 # Logs

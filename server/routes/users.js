@@ -3,6 +3,7 @@ const express = require('express')
 const router = express.Router()
 const auth = require('../middleware/auth')
 const User = require('../models/user')
+const upload = require('../middleware/upload')
 
 router.get('/', function (req, res) {
   User.find().exec(function (err, users) {
@@ -157,6 +158,33 @@ router.post('/profile/:id', auth.authenticate, async function (req, res) {
       }
     } else {
       return res.status(404).json({
+        message: 'User not found.'
+      })
+    }
+  } catch (err) {
+    res.status(500).json({
+      message: err.message
+    })
+  }
+})
+
+router.post('/avatar/:id', auth.authenticate, upload.single('file'), async function (req, res) {
+  try {
+    const user = await User.findById(req.params.id)
+    if (user) {
+      if (user._id === req.user._id || req.user.owner || req.user.admin) {
+        user.avatar = `/avatars/${req.file.filename}`
+        await user.save()
+        res.status(200).json({
+          url: user.avatar
+        })
+      } else {
+        res.status(403).json({
+          message: 'Only site owners, administrators, and the user theirself can upload a new avatar for a user.'
+        })
+      }
+    } else {
+      res.status(404).json({
         message: 'User not found.'
       })
     }
