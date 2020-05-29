@@ -39,11 +39,7 @@
 
       <template slot="title">
         <v-flex class="d-flex flex-row align-center">
-          <v-avatar
-            color="primary"
-          >
-            <v-icon>mdi-account</v-icon>
-          </v-avatar>
+          <wtf-avatar :user="profile" />
 
           <v-flex class="d-flex flex-column ml-3">
             <span class="title">
@@ -264,6 +260,9 @@ export default {
         this.$axios.post(`/api/users/avatar/${this.profile._id}`, formData)
           .then((res) => {
             this.profile.avatar = res.data.url
+            if (this.profile._id === this.$auth.user._id) {
+              this.$auth.setUser(this.profile)
+            }
             this.cancelAvatar()
           }).catch((err) => {
             alert(err)
