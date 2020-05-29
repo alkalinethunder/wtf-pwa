@@ -45,9 +45,13 @@
           </v-btn>
         </template>
       </wtf-login>
-      <v-btn text to="/auth/register">
-        Create account
-      </v-btn>
+      <wtf-create-account>
+        <template v-slot:activator="{ on }">
+          <v-btn text v-on="on">
+            Create account
+          </v-btn>
+        </template>
+      </wtf-create-account>
     </div>
   </div>
 </template>

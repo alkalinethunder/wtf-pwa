@@ -22,3 +22,4 @@ Vue.component('wtf-page-viewer', () => import('~/components/wtf-page-viewer.vue'
 Vue.component('wtf-recursive-pages-list', () => import('~/components/wtf-recursive-pages-list.vue'))
 
 Vue.component('wtf-login', () => (import('~/components/wtf-login-modal.vue')))
+Vue.component('wtf-create-account', () => (import('~/components/wtf-create-account-modal.vue')))

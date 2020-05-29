@@ -19,9 +19,9 @@ router.post('/', function (req, res) {
   const reqBody = {
     username: req.body.username,
     email: req.body.email,
-    emailConfirm: req.body.emailConfirm,
+    emailConfirm: req.body.confirmEmail,
     password: req.body.password,
-    passwordConfirm: req.body.passwordConfirm
+    passwordConfirm: req.body.confirmPassword
   }
 
   if (reqBody.username) {
@@ -43,11 +43,11 @@ router.post('/', function (req, res) {
             })
           } else if (existingUser) {
             if (existingUser.username == reqBody.username) {
-              res.status(400).json({
+              res.status(403).json({
                 message: 'Username already taken by another user.'
               })
             } else if(existingUser.email === email) {
-              res.status(400).json({
+              res.status(403).json({
                 message: 'Email already registered by another user.'
               })
             }
@@ -55,7 +55,8 @@ router.post('/', function (req, res) {
             const newUser = new User({
               email: reqBody.email,
               username: reqBody.username,
-              joined: new Date()
+              joined: new Date(),
+              content: ''
             })
 
             newUser.setPassword(reqBody.password)
