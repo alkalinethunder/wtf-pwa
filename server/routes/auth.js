@@ -13,7 +13,12 @@ router.post('/login', function (req, res) {
   const email = req.body.email
   const password = req.body.password
 
-  User.findOne({ email }).exec(function (err, user) {
+  User.findOne({
+    $or: [
+      { email },
+      { username: email }
+    ]
+  }).exec(function (err, user) {
     if (err) {
       res.status(500).json({
         message: err.message
