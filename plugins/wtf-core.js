@@ -20,3 +20,5 @@ Vue.component('wtf-page-editor', () => import('~/components/wtf-page-editor.vue'
 Vue.component('wtf-page-viewer', () => import('~/components/wtf-page-viewer.vue'))
 
 Vue.component('wtf-recursive-pages-list', () => import('~/components/wtf-recursive-pages-list.vue'))
+
+Vue.component('wtf-login', () => (import('~/components/wtf-login-modal.vue')))

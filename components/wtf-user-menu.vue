@@ -38,9 +38,13 @@
       </v-list>
     </v-menu>
     <div v-else>
-      <v-btn text to="/auth/login">
-        Log in
-      </v-btn>
+      <wtf-login>
+        <template v-slot:activator="{ on }">
+          <v-btn text v-on="on">
+            Log in
+          </v-btn>
+        </template>
+      </wtf-login>
       <v-btn text to="/auth/register">
         Create account
       </v-btn>
