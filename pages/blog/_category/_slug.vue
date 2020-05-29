@@ -5,7 +5,13 @@
         {{ post.name }}
       </template>
       <template slot="page-information">
-        Posted {{ created }} by {{ author }}
+        Posted {{ created }} by
+        <nuxt-link
+          class="wtf-link text--secondary"
+          :to="`/u/${post.author.username}`"
+        >
+          {{ author }}
+        </nuxt-link>
       </template>
 
       <v-img v-if="post.featuredUrl" :src="post.featuredUrl" />
