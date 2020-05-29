@@ -56,6 +56,9 @@
                 label="Password"
                 :error-messages="errors.password"
               />
+              <span class="caption">
+                Password strength: {{ passwordStrengthText }}
+              </span>
             </v-col>
 
             <v-col cols="6">
@@ -96,6 +99,8 @@
 </template>
 
 <script>
+import passwordStrength from 'check-password-strength'
+
 export default {
   props: {
     permanent: {
@@ -121,6 +126,22 @@ export default {
       },
       loginActive: false,
       error: ''
+    }
+  },
+  computed: {
+    passwordStrengthText () {
+      if (this.user.password) {
+        return passwordStrength(this.user.password).value
+      } else {
+        return 'Weak'
+      }
+    },
+    passwordStrengthValue () {
+      if (this.user.password) {
+        return passwordStrength(this.user.password).id
+      } else {
+        return 0
+      }
     }
   },
   mounted () {
@@ -160,6 +181,11 @@ export default {
 
         if (this.user.password !== this.user.confirmPassword) {
           this.errors.confirmPassword = 'Passwords do not match.'
+          return
+        }
+
+        if (this.passwordStrengthValue < 2) {
+          this.errors.password = 'Password is too weak.'
           return
         }
 
