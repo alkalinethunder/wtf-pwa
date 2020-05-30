@@ -32,6 +32,24 @@
             <v-btn v-if="$auth.loggedIn" text small @click="beginReply(comment._id)">
               Reply
             </v-btn>
+
+            <v-btn v-if="canModerate || userOwns(comment)" icon small @click="startEdit(comment)">
+              <v-icon small>
+                mdi-lead-pencil
+              </v-icon>
+            </v-btn>
+
+            <v-btn v-if="canModerate || userOwns(comment)" icon small>
+              <v-icon small>
+                mdi-delete
+              </v-icon>
+            </v-btn>
+
+            <v-btn v-if="canModerate || userOwns(comment)" icon small>
+              <v-icon small>
+                mdi-dots-horizontal
+              </v-icon>
+            </v-btn>
           </template>
 
           <v-form
@@ -60,13 +78,86 @@
             </v-flex>
           </v-form>
 
-          <wtf-comment v-for="reply of replies(comment._id)" :key="reply._id" :comment="reply" />
+          <wtf-comment v-for="reply of replies(comment._id)" :key="reply._id" :comment="reply">
+            <template slot="comment-actions">
+              <v-btn v-if="canModerate || userOwns(reply)" icon small @click="startEdit(reply)">
+                <v-icon small>
+                  mdi-lead-pencil
+                </v-icon>
+              </v-btn>
+
+              <v-btn v-if="canModerate || userOwns(reply)" icon small>
+                <v-icon small>
+                  mdi-delete
+                </v-icon>
+              </v-btn>
+
+              <v-btn v-if="canModerate || userOwns(reply)" icon small>
+                <v-icon small>
+                  mdi-dots-horizontal
+                </v-icon>
+              </v-btn>
+            </template>
+          </wtf-comment>
         </wtf-comment>
       </div>
     </div>
     <p v-else class="caption">
       There are no comments to display yet.
     </p>
+
+    <v-dialog
+      v-model="editingComment"
+      persistent
+      width="630"
+    >
+      <v-card>
+        <v-card-title class="title">
+          Edit comment
+        </v-card-title>
+        <v-divider />
+
+        <v-form @submit="saveEdit">
+          <v-card-text v-if="edit">
+            <div class="d-flex flex-row">
+              <wtf-avatar :user="edit.author" />
+
+              <v-flex class="d-flex flex-column ml-3 justify-start">
+                <span class="subtitle-2">
+                  {{ edit.author.displayName || edit.author.username }}
+                </span>
+
+                <v-textarea
+                  v-model="edit.body"
+                  rows="1"
+                  dense
+                  auto-grow
+                  hint="Comment text"
+                  :error-messages="error"
+                />
+              </v-flex>
+            </div>
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer />
+            <v-btn
+              text
+              @click="cancelEdit"
+            >
+              Cancel
+            </v-btn>
+            <v-btn
+              text
+              color="primary"
+              type="submit"
+            >
+              Save
+            </v-btn>
+          </v-card-actions>
+        </v-form>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -86,7 +177,14 @@ export default {
     return {
       newComment: '',
       newReply: '',
-      replying: ''
+      replying: '',
+      editingComment: false,
+      edit: {
+        id: '',
+        body: '',
+        author: {}
+      },
+      error: ''
     }
   },
   computed: {
@@ -97,6 +195,9 @@ export default {
       return this.replying
         ? this.newReply && this.newReply.trim().length
         : this.newComment && this.newComment.trim().length
+    },
+    canModerate () {
+      return this.$auth.loggedIn && (this.$auth.user.owner || this.$auth.user.admin || this.$auth.user.editor || this.$auth.user.moderator)
     }
   },
   methods: {
@@ -132,6 +233,49 @@ export default {
             this.newReply = ''
             this.newComment = ''
           })
+      }
+    },
+    userOwns (comment) {
+      return this.$auth.loggedIn && this.$auth.user._id === comment.author._id
+    },
+    startEdit (comment) {
+      this.editingComment = true
+      this.edit.id = comment._id
+      this.edit.author = comment.author
+      this.edit.body = comment.body
+    },
+    cancelEdit () {
+      this.editingComment = false
+      this.edit = null
+    },
+    async saveEdit (evt) {
+      evt.preventDefault()
+
+      if (this.edit.body && this.edit.body.trim()) {
+        try {
+          const res = await this.$axios.post(`/api/comment/${this.edit.id}`, this.edit)
+
+          if (res.data.commentType === 'post') {
+            for (const postComment of this.value.comments) {
+              if (postComment._id === res.data._id) {
+                postComment.body = res.data.body
+                return this.cancelEdit()
+              }
+            }
+          } else {
+            for (const reply of this.value.replies[res.data.belongsTo]) {
+              if (reply._id === res.data._id) {
+                reply.body = res.data.body
+                this.cancelEdit()
+                return
+              }
+            }
+          }
+        } catch (err) {
+          this.error = err.message
+        }
+      } else {
+        this.error = 'Comments cannot be blank.'
       }
     },
     replies (commentId) {

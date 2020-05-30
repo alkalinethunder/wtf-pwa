@@ -40,6 +40,7 @@ async function start (siteSettings) {
   const MenuRouter = require('./routes/menu')
   const CategoryRouter = require('./routes/category')
   const CommentsRouter = require('./routes/comments')
+  const CommentRouter = require('./routes/comment')
 
   // We kinda need this to parse POST requests.
   app.use(bodyParser.json())
@@ -68,6 +69,7 @@ async function start (siteSettings) {
   app.use('/api/menu', MenuRouter)
   app.use('/api/category', CategoryRouter)
   app.use('/api/comments', CommentsRouter)
+  app.use('/api/comment', CommentRouter)
 
   // Prevents nuxt from taking over on any requests that intended on interacting with
   // the /api URLs, and that ended up getting a 404.
