@@ -11,6 +11,7 @@ const UserSchema = new Schema({
   joined: { type: Date, required: true },
   about: { type: String, required: false, default: '' },
   avatar: { type: String, required: false, default: '' },
+  cover: { type: String, required: false, default: '' },
   salt: { type: String, required: true, private: true },
   hash: { type: String, required: true, private: true },
   admin: { type: Boolean, default: false },

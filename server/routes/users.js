@@ -195,4 +195,31 @@ router.post('/avatar/:id', auth.authenticate, upload.single('file'), async funct
   }
 })
 
+router.post('/cover/:id', auth.authenticate, upload.single('file'), async function (req, res) {
+  try {
+    const user = await User.findById(req.params.id)
+    if (user) {
+      if (user._id === req.user._id || req.user.owner || req.user.admin) {
+        user.cover = `/covers/${req.file.filename}`
+        await user.save()
+        res.status(200).json({
+          url: user.cover
+        })
+      } else {
+        res.status(403).json({
+          message: 'Only site owners, administrators, and the user theirself can upload a new cover image for a user.'
+        })
+      }
+    } else {
+      res.status(404).json({
+        message: 'User not found.'
+      })
+    }
+  } catch (err) {
+    res.status(500).json({
+      message: err.message
+    })
+  }
+})
+
 module.exports = router
