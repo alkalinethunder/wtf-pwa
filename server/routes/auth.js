@@ -9,34 +9,23 @@ router.get('/user', auth.authenticate, function (req, res) {
 
 router.post('/refresh', auth.refresh)
 
-router.post('/login', function (req, res) {
-  const email = req.body.email
-  const password = req.body.password
+router.post('/login', async function (req, res) {
+  try {
+    const email = req.body.email
+    const password = req.body.password
 
-  User.findOne({
-    $or: [
-      { email },
-      { username: email }
-    ]
-  }).exec(function (err, user) {
-    if (err) {
-      res.status(500).json({
-        message: err.message
-      })
-    } else if (user) {
+    const user = await User.findOne({
+      $or: [
+        { email },
+        { username: email }
+      ]
+    })
+
+    if (user) {
       if (user.validatePassword(password)) {
-        auth.generateToken(user, function (err, token) {
-          if (err) {
-            res.status(500).json({
-              message: err.message
-            })
-          } else {
-            res.status(200).json({
-              ...token,
-              user
-            })
-          }
-        })
+        const token = await auth.generateToken(user)
+
+        res.status(200).json(token)
       } else {
         res.status(401).json({
           message: 'The given password is invalid. Please try again.'
@@ -47,68 +36,59 @@ router.post('/login', function (req, res) {
         message: 'A user with this email address does not exist.'
       })
     }
-  })
+  } catch (err) {
+    res.status(500).json({
+      message: err.message
+    })
+  }
 })
 
-router.post('/change-password', auth.authenticate, function (req, res) {
-  const currentPassword = req.body.password
-  const newPassword = req.body.newPassword
-  const confirm = req.body.confirm
+router.post('/change-password', auth.authenticate, async function (req, res) {
+  try {
+    const currentPassword = req.body.password
+    const newPassword = req.body.newPassword
+    const confirm = req.body.confirm
 
-  if (!currentPassword) {
-    res.status(400).json({
-      message: 'Password is required.'
-    })
-  } else if (!newPassword) {
-    res.status(400).json({
-      message: 'New password is required.'
-    })
-  } else if (!confirm) {
-    res.status(400).json({
-      message: 'Confirmed new password is required.'
-    })
-  } else if (newPassword !== confirm) {
-    res.status(500).json({
-      message: 'Passwords do not match.'
-    })
-  } else if (newPassword === currentPassword) {
-    res.status(400).json({
-      message: 'New password cannot be the same as current password.'
-    })
-  } else {
-    User.findById(user._id).exec(function (err, user) {
-      if (err) {
-        res.status(500).json({
-          message: err.message
+    if (!currentPassword) {
+      res.status(400).json({
+        message: 'Password is required.'
+      })
+    } else if (!newPassword) {
+      res.status(400).json({
+        message: 'New password is required.'
+      })
+    } else if (!confirm) {
+      res.status(400).json({
+        message: 'Confirmed new password is required.'
+      })
+    } else if (newPassword !== confirm) {
+      res.status(500).json({
+        message: 'Passwords do not match.'
+      })
+    } else if (newPassword === currentPassword) {
+      res.status(400).json({
+        message: 'New password cannot be the same as current password.'
+      })
+    } else {
+      const user = await User.findById(req.user._id)
+
+      if (user.validatePassword(currentPassword)) {
+        user.setPassword(newPassword)
+
+        const saved = await user.save()
+
+        res.status(200).json({
+          message: 'Password updated successfully.'
         })
-      } else if (user) {
-        if (user.validatePassword(currentPassword)) {
-          user.setPassword(newPassword)
-          user.save(function (err, saved) {
-            if (err) {
-              res.status(500).json({
-                message: err.message
-              })
-            } else if (saved) {
-              res.status(200).json({
-                message: 'Password updated successfully.'
-              })
-            } else {
-              res.status(500).json({
-                message: 'Unknown error occurred.'
-              })
-            }
-          })
-        } else {
-          res.status(403).json({
-            message: 'You must specify the correct current password to change your password.'
-          })
-        }
       } else {
-        res.status(401).json({
-          message: 'User not found.'
+        res.status(403).json({
+          message: 'You must specify the correct current password to change your password.'
         })
       }
+    }
+  } catch (err) {
+    res.status(500).json({
+      message: err.message
     })
   }
 })
