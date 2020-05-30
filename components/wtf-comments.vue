@@ -39,7 +39,7 @@
               </v-icon>
             </v-btn>
 
-            <v-btn v-if="canModerate || userOwns(comment)" icon small>
+            <v-btn v-if="canModerate || userOwns(comment)" icon small @click="startDelete(comment)">
               <v-icon small>
                 mdi-delete
               </v-icon>
@@ -86,7 +86,7 @@
                 </v-icon>
               </v-btn>
 
-              <v-btn v-if="canModerate || userOwns(reply)" icon small>
+              <v-btn v-if="canModerate || userOwns(reply)" icon small @click="startDelete(reply)">
                 <v-icon small>
                   mdi-delete
                 </v-icon>
@@ -105,6 +105,44 @@
     <p v-else class="caption">
       There are no comments to display yet.
     </p>
+
+    <v-dialog
+      v-model="deletingComment"
+      persistent
+      width="400"
+    >
+      <v-card>
+        <v-card-title class="title">
+          Delete comment
+        </v-card-title>
+
+        <v-divider />
+
+        <v-card-text v-if="deleteComment && deleteComment.author">
+          Are you sure you want to delete the following comment?
+
+          <wtf-comment :comment="deleteComment" />
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer />
+
+          <v-btn
+            text
+            @click="cancelDelete"
+          >
+            Nope
+          </v-btn>
+          <v-btn
+            text
+            color="error"
+            @click="confirmDelete"
+          >
+            Nukey McNukeface
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
     <v-dialog
       v-model="editingComment"
@@ -179,6 +217,8 @@ export default {
       newReply: '',
       replying: '',
       editingComment: false,
+      deletingComment: false,
+      deleteComment: {},
       edit: {
         id: '',
         body: '',
@@ -205,12 +245,36 @@ export default {
       this.newComment = ''
       this.replying = id
     },
+    cancelDelete () {
+      this.deleteComment = {}
+      this.deletingComment = false
+    },
+    async confirmDelete () {
+      try {
+        const res = await this.$axios.post(`/api/comment/${this.deleteComment._id}/delete`)
+
+        if (res.data.commentType === 'post') {
+          delete this.value.replies[res.data._id]
+          this.value.comments = this.value.comments.filter(x => x._id !== res.data._id)
+        } else {
+          this.value.replies[res.data.belongsTo] = this.value.replies[res.data.belongsTo].filter(x => x._id !== res.data._id)
+        }
+
+        this.cancelDelete()
+      } catch {
+        // TODO
+      }
+    },
     cancelReply () {
       if (this.replying) {
         this.replying = ''
         this.newComment = ''
         this.newReply = ''
       }
+    },
+    startDelete (comment) {
+      this.deleteComment = comment
+      this.deletingComment = true
     },
     postComment (evt) {
       evt.preventDefault()
