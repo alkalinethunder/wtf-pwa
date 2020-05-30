@@ -29,8 +29,32 @@ function getHeadingClass (depth) {
 
 Vue.use(mdRenderer, {
   marked: {
-    gfm: true,
-    breaks: true
+    // gfm: true,
+    // breaks: true,
+    tokenizer: {
+      inlineText (src, inRawBlock, smartypants) {
+        const regex = /@([A-z0-9\-_]+)/ig
+        const cap = regex.exec(src)
+        if (cap) {
+          const startIndex = regex.lastIndex - cap[0].length
+          if (startIndex > 0) {
+            const ss = src.substring(0, startIndex)
+            return {
+              type: 'text',
+              raw: ss
+            }
+          } else {
+            return {
+              type: 'mention',
+              raw: cap[0],
+              user: cap[1]
+            }
+          }
+        } else {
+          return false
+        }
+      }
+    }
   },
   elements: {
     image: 'v-img',
@@ -38,6 +62,13 @@ Vue.use(mdRenderer, {
     table: 'v-simple-table'
   },
   mappings: {
+    mention: ({ token, createElement }) => {
+      return createElement('wtf-user-mention', {
+        props: {
+          value: token.user
+        }
+      })
+    },
     link: ({ token, createElement, config, processTokens }) => {
       if (token.href.startsWith('>')) {
         return createElement(config.elements.routerLink, {
