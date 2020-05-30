@@ -45,7 +45,7 @@
               </v-icon>
             </v-btn>
 
-            <v-btn v-if="canModerate || userOwns(comment)" icon small>
+            <v-btn v-if="canModerate" icon small>
               <v-icon small>
                 mdi-dots-horizontal
               </v-icon>
@@ -92,7 +92,7 @@
                 </v-icon>
               </v-btn>
 
-              <v-btn v-if="canModerate || userOwns(reply)" icon small>
+              <v-btn v-if="canModerate" icon small>
                 <v-icon small>
                   mdi-dots-horizontal
                 </v-icon>
