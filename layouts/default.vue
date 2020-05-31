@@ -37,12 +37,92 @@
       :color="themeBackground"
     >
       <v-app-bar-nav-icon @click="drawer = !drawer" />
-      <v-flex class="d-flex flex-column ml-3">
+      <div class="d-flex flex-column ml-3">
         <v-toolbar-title>{{ settings.name }}</v-toolbar-title>
         <span class="caption">
           {{ settings.description }}
         </span>
-      </v-flex>
+      </div>
+
+      <v-spacer />
+
+      <wtf-dark-mode-toggle />
+      <wtf-user-menu />
+
+      <v-menu offset-y>
+        <template v-slot:activator="{ on }">
+          <v-btn icon v-on="on">
+            <v-icon>mdi-dots-vertical</v-icon>
+          </v-btn>
+        </template>
+        <v-list dense>
+          <div v-if="$menu('footer-1')">
+            <v-list-item
+              v-for="item of $menu('footer-1')"
+              :key="item._id"
+              :href="item.type === 'external' ? item.href : null"
+              :to="item.type !== 'external' ? item.href : null"
+            >
+              <v-list-item-content>
+                <v-list-item-title>
+                  {{ item.name }}
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-divider />
+          </div>
+          <div v-if="$menu('footer-2')">
+            <v-list-item
+              v-for="item of $menu('footer-2')"
+              :key="item._id"
+              :href="item.type === 'external' ? item.href : null"
+              :to="item.type !== 'external' ? item.href : null"
+            >
+              <v-list-item-content>
+                <v-list-item-title>
+                  {{ item.name }}
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-divider />
+          </div>
+          <div v-if="$menu('footer-3')">
+            <v-list-item
+              v-for="item of $menu('footer-3')"
+              :key="item._id"
+              :href="item.type === 'external' ? item.href : null"
+              :to="item.type !== 'external' ? item.href : null"
+            >
+              <v-list-item-content>
+                <v-list-item-title>
+                  {{ item.name }}
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-divider />
+          </div>
+          <v-list-item
+            v-if="settings.showDeveloperCredit && settings.developerGitHubLinkInCredit"
+            href="https://github.com/alkalinethunder/wtf-pwa"
+          >
+            <v-list-item-content>
+              <v-list-item-title>
+                Source code
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item
+            v-if="$auth.loggedIn && ($auth.user.owner || $auth.user.admin)"
+            to="/admin"
+          >
+            <v-list-item-content>
+              <v-list-item-title>
+                Administrate
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </v-app-bar>
 
     <v-content app :class="themeBackground">
@@ -80,7 +160,7 @@
         <v-sheet>
           <nuxt />
 
-          <v-container>
+          <v-container class="d-none d-sm-block">
             <v-row>
               <v-col
                 cols="12"
