@@ -37,21 +37,26 @@
       :color="themeBackground"
     >
       <v-app-bar-nav-icon @click="drawer = !drawer" />
-      <div class="d-flex flex-column ml-3">
-        <v-toolbar-title>{{ settings.name }}</v-toolbar-title>
-        <span class="caption">
-          {{ settings.description }}
-        </span>
-      </div>
+
+      <v-list-item dense two-line color="transparent">
+        <v-list-item-content>
+          <v-list-item-title>
+            {{ settings.name }}
+          </v-list-item-title>
+          <v-list-item-subtitle>
+            {{ mobileDescription }}
+          </v-list-item-subtitle>
+        </v-list-item-content>
+      </v-list-item>
 
       <v-spacer />
 
-      <wtf-dark-mode-toggle />
-      <wtf-user-menu />
+      <wtf-dark-mode-toggle small />
+      <wtf-user-menu mobile />
 
       <v-menu offset-y>
         <template v-slot:activator="{ on }">
-          <v-btn icon v-on="on">
+          <v-btn icon small v-on="on">
             <v-icon>mdi-dots-vertical</v-icon>
           </v-btn>
         </template>
@@ -255,6 +260,8 @@
 </template>
 
 <script>
+import truncate from 'truncate'
+
 export default {
   data () {
     return {
@@ -262,6 +269,9 @@ export default {
     }
   },
   computed: {
+    mobileDescription () {
+      return truncate(this.settings.description, 24)
+    },
     themeBackground () {
       return this.dark ? '' : 'primary'
     },
