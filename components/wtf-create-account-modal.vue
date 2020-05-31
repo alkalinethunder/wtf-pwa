@@ -185,7 +185,7 @@ export default {
           return
         }
 
-        if (this.passwordStrengthValue < 2) {
+        if (this.passwordStrengthValue < 1) {
           this.errors.password = 'Password is too weak.'
           return
         }

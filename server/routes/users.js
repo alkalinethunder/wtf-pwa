@@ -138,7 +138,7 @@ router.post('/', async function (req, res) {
     // Measure the strength of the specified password.  It'll return an object with a 'value' and 'id',
     // 'id' is a number that tells us how strong the password is.  'id' of 2 = strong enough to feasibly use without
     // getting hacked immediately.
-    if (passwordStrength(password).id < 2) {
+    if (passwordStrength(password).id < 1) {
       return res.status(400).json({
         message: 'Password is too weak.'
       })
