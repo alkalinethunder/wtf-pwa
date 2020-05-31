@@ -116,7 +116,8 @@
 
           <v-row>
             <v-col
-              cols="6"
+              cols="12"
+              md="6"
             >
               <v-select
                 v-model="menuitem.slot"
@@ -128,7 +129,8 @@
               />
             </v-col>
             <v-col
-              cols="6"
+              cols="12"
+              md="6"
             >
               <v-select
                 v-model="menuitem.type"

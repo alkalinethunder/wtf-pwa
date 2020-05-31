@@ -5,7 +5,13 @@
         {{ post.name }}
       </template>
       <template slot="page-information">
-        Posted {{ created }} by {{ author }}
+        Posted {{ created }} by
+        <nuxt-link
+          class="wtf-link text--secondary"
+          :to="`/u/${post.author.username}`"
+        >
+          {{ author }}
+        </nuxt-link>
       </template>
 
       <v-img v-if="post.featuredUrl" :src="post.featuredUrl" />
@@ -26,7 +32,7 @@
 
       <template slot="sidebar">
         <v-flex class="d-flex flex-row mb-6">
-          <v-avatar color="primary" />
+          <wtf-avatar :user="post.author" />
 
           <v-flex class="d-flex flex-column ml-3">
             <span class="overline">
@@ -40,6 +46,13 @@
             <p v-else class="body-2">
               This user has nothing to say about themselves.
             </p>
+
+            <v-btn
+              text
+              :to="`/u/${post.author.username}`"
+            >
+              View profile
+            </v-btn>
           </v-flex>
         </v-flex>
 

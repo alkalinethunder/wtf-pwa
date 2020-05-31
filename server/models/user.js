@@ -11,6 +11,7 @@ const UserSchema = new Schema({
   joined: { type: Date, required: true },
   about: { type: String, required: false, default: '' },
   avatar: { type: String, required: false, default: '' },
+  cover: { type: String, required: false, default: '' },
   salt: { type: String, required: true, private: true },
   hash: { type: String, required: true, private: true },
   admin: { type: Boolean, default: false },
@@ -19,7 +20,9 @@ const UserSchema = new Schema({
   banned: { type: Boolean, default: false },
   bannedDate: { type: Date, default: null },
   owner: { type: Boolean, default: false },
-  content: { type: String, required: true, default: '' }
+  content: { type: String, required: false, default: '' },
+  muted: { type: Boolean, required: false, default: false },
+  mutedAt: { type: Date, required: false }
 })
 
  UserSchema.methods.setPassword = function (password) {

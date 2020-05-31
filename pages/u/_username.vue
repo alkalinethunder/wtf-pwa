@@ -2,29 +2,49 @@
   <div>
     <wtf-page-viewer>
       <template slot="prepend">
-        <v-responsive :aspect-ratio="64/9" class="primary">
-          <v-img class="wtf-cover" />
-
+        <v-responsive :aspect-ratio="48/9" :style="coverStyle">
           <v-flex class="d-flex flex-row justify-end mt-2 mr-2 align-center">
-            <v-btn
-              v-if="canEdit"
-              icon
-              @click="showEditDialog"
-            >
-              <v-icon>mdi-lead-pencil</v-icon>
-            </v-btn>
+            <v-menu left offset-y>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  v-if="canEdit"
+                  icon
+                  v-on="on"
+                >
+                  <v-icon>mdi-dots-vertical</v-icon>
+                </v-btn>
+              </template>
+              <v-list dense>
+                <v-list-item @click="showEditDialog">
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      Edit profile
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item @click="showAvatarDialog">
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      Change avatar
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item @click="showCoverDialog">
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      Change cover image
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </v-menu>
           </v-flex>
         </v-responsive>
       </template>
 
       <template slot="title">
         <v-flex class="d-flex flex-row align-center">
-          <v-btn
-            fab
-            color="primary"
-          >
-            <v-icon>mdi-account</v-icon>
-          </v-btn>
+          <wtf-avatar :user="profile" />
 
           <v-flex class="d-flex flex-column ml-3">
             <span class="title">
@@ -114,6 +134,98 @@
           </v-form>
         </v-card>
       </v-dialog>
+
+      <v-dialog
+        v-model="editAvatar"
+        persistent
+        width="400"
+      >
+        <v-card>
+          <v-card-title class="title">
+            Change avatar
+          </v-card-title>
+          <v-divider />
+
+          <v-card-text>
+            <v-flex class="d-flex flex-column align-center">
+              <v-avatar
+                size="256"
+              >
+                <v-img :src="avatarUrl" />
+              </v-avatar>
+
+              <v-file-input
+                style="width: 100%;"
+                accept="image/*"
+                label="Select avatar image"
+                @change="setAvatarToUpload"
+              />
+            </v-flex>
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer />
+            <v-btn
+              text
+              @click="cancelAvatar"
+            >
+              Cancel
+            </v-btn>
+            <v-btn
+              text
+              color="primary"
+              @click="saveAvatar"
+            >
+              Save
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <v-dialog
+        v-model="editCover"
+        persistent
+        width="900"
+      >
+        <v-card>
+          <v-card-title class="title">
+            Change cover image
+          </v-card-title>
+          <v-divider />
+
+          <v-card-text>
+            <v-responsive :aspect-ratio="48/9">
+              <v-img
+                class="wtf-cover"
+                :src="coverUrl"
+              />
+            </v-responsive>
+
+            <v-file-input
+              accept="image/*"
+              label="Select cover image"
+              @change="setCoverToUpload"
+            />
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer />
+            <v-btn
+              text
+              @click="cancelCover"
+            >
+              Cancel
+            </v-btn>
+            <v-btn
+              text
+              color="primary"
+              @click="saveCover"
+            >
+              Save
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </wtf-page-viewer>
   </div>
 </template>
@@ -124,10 +236,29 @@ export default {
     return {
       profile: {},
       edit: {},
-      editProfile: false
+      editProfile: false,
+      avatarUrl: '',
+      avatarToUpload: null,
+      editAvatar: false,
+      editCover: false,
+      coverToUpload: null,
+      coverUrl: ''
     }
   },
   computed: {
+    coverStyle () {
+      if (this.profile.cover) {
+        return {
+          background: `url('${this.profile.cover}') !important`,
+          backgroundSize: 'cover !important',
+          backgroundPosition: 'center'
+        }
+      } else {
+        return {
+          background: `${this.$vuetify.theme.themes[this.$vuetify.theme.dark ? 'dark' : 'light'].primary} !important`
+        }
+      }
+    },
     canEdit () {
       if (this.$auth.loggedIn) {
         return this.$auth.user._id === this.profile._id || this.$auth.user.owner || this.$auth.user.admin
@@ -172,6 +303,72 @@ export default {
     showEditDialog () {
       this.edit = Object.assign(this.profile)
       this.editProfile = true
+    },
+    showAvatarDialog () {
+      this.editAvatar = true
+      this.avatarUrl = this.profile.avatar
+    },
+    showCoverDialog () {
+      this.editCover = true
+      this.coverUrl = this.profile.cover
+    },
+    setAvatarToUpload (file) {
+      const url = URL.createObjectURL(file)
+      this.avatarUrl = url.toString()
+      this.avatarToUpload = file
+    },
+    setCoverToUpload (file) {
+      const url = URL.createObjectURL(file)
+      this.coverUrl = url.toString()
+      this.coverToUpload = file
+    },
+    cancelAvatar () {
+      this.avatarUrl = this.profile.avatar
+      this.avatarToUpload = null
+      this.editAvatar = false
+    },
+    cancelCover () {
+      this.coverUrl = this.profile.cover
+      this.coverToUpload = null
+      this.editCover = false
+    },
+    saveCover () {
+      if (this.coverToUpload) {
+        const formData = new FormData()
+        formData.set('file', this.coverToUpload)
+
+        this.$axios.post(`/api/users/cover/${this.profile._id}`, formData)
+          .then((res) => {
+            this.profile.cover = res.data.url
+            if (this.profile._id === this.$auth.user._id) {
+              this.$auth.setUser(this.profile)
+            }
+            this.cancelCover()
+          }).catch((err) => {
+            alert(err)
+          })
+      } else {
+        this.cancelCover()
+      }
+    },
+    saveAvatar () {
+      if (this.avatarToUpload) {
+        const formData = new FormData()
+        formData.set('file', this.avatarToUpload)
+
+        this.$axios.post(`/api/users/avatar/${this.profile._id}`, formData)
+          .then((res) => {
+            this.profile.avatar = res.data.url
+            if (this.profile._id === this.$auth.user._id) {
+              this.$auth.setUser(this.profile)
+            }
+            this.cancelAvatar()
+          }).catch((err) => {
+            alert(err)
+          })
+      } else {
+        this.cancelAvatar()
+      }
     }
   }
 }

@@ -12,7 +12,7 @@ class Auth {
     this.owner = this.owner.bind(this)
   }
 
-  generateToken (user, cb) {
+  async generateToken (user) {
     const access = jwt.sign(user.toJSON(), process.env.ACCESS_TOKEN_SECRET)
     const refresh = jwt.sign(user.toJSON(), process.env.REFRESH_TOKEN_SECRET)
 
@@ -20,12 +20,12 @@ class Auth {
       token: refresh
     })
 
-    storedToken.save((err, token) => {
-      cb(err, {
-        access,
-        refresh
-      })
-    })
+    await storedToken.save()
+
+    return {
+      access,
+      refresh
+    }
   }
 
   authenticate (req, res, next) {
@@ -130,15 +130,14 @@ class Auth {
                     message: err.message
                   })
                 } else if (realUser) {
-                  this.generateToken(realUser, (err, token) => {
-                    if (err) {
+                  this.generateToken(user)
+                    .then((t) => {
+                      res.status(200).json(t)
+                    }).catch((err) => {
                       res.status(500).json({
                         message: err.message
                       })
-                    } else {
-                      res.status(200).json(token)
-                    }
-                  })
+                    })
                 } else {
                   // This is a catch-all, ideally deleting a user account should revoke
                   // their token.

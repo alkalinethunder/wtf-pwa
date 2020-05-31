@@ -30,7 +30,51 @@ function getHeadingClass (depth) {
 Vue.use(mdRenderer, {
   marked: {
     gfm: true,
-    breaks: true
+    breaks: true,
+    tokenizer: {
+      inlineText (src, inRawBlock, smartypants) {
+        // FUCK that's a long-ass regex I stole from marked's code.
+        const cap = /^(`+|[^`])(?:[\s\S]*?(?:(?=[\\<![`*~]|\b_|https?:\/\/|ftp:\/\/|www\.|$)|[^ ](?= {2,}\n)|[^a-zA-Z0-9.!#$%&'*+/=?_`{|}~-](?=[a-zA-Z0-9.!#$%&'*+/=?_`{|}~-]+@))|(?= {2,}\n|[a-zA-Z0-9.!#$%&'*+/=?_`{|}~-]+@))/.exec(src)
+
+        // So basically I'm stealing marked's regular inlineText tokenizer function and inserting my own code into it.
+        if (cap) {
+          let raw = cap[0]
+          let text = ''
+
+          // This is where my code starts.
+          const mentionRegex = /@([\w-]+)/g
+          const mentionCap = mentionRegex.exec(raw)
+
+          // Basically this allows you to @mention people - in a really fucking hacky way.
+          if (mentionCap) {
+            const mentionStart = mentionRegex.lastIndex - mentionCap[0].length
+            if (mentionStart > 0) {
+              raw = raw.substring(0, mentionStart)
+            } else {
+              return {
+                type: 'mention',
+                raw: mentionCap[0],
+                user: mentionCap[1]
+              }
+            }
+          }
+
+          if (inRawBlock) {
+            text = this.options.sanitize ? (this.options.sanitizer ? this.options.sanitizer(raw) : escape(raw)) : raw
+          } else {
+            text = escape(this.options.smartypants ? smartypants(raw) : raw)
+          }
+
+          return {
+            type: 'text',
+            raw,
+            text
+          }
+        } else {
+          return false
+        }
+      }
+    }
   },
   elements: {
     image: 'v-img',
@@ -38,6 +82,13 @@ Vue.use(mdRenderer, {
     table: 'v-simple-table'
   },
   mappings: {
+    mention: ({ token, createElement }) => {
+      return createElement('wtf-user-mention', {
+        props: {
+          value: token.user
+        }
+      })
+    },
     link: ({ token, createElement, config, processTokens }) => {
       if (token.href.startsWith('>')) {
         return createElement(config.elements.routerLink, {
@@ -84,7 +135,7 @@ Vue.use(mdRenderer, {
     }, processTokens(token.tokens, createElement, config)),
     paragraph: ({ token, createElement, config, processTokens }) => createElement('p', {
       attrs: {
-        class: 'body-1'
+        class: 'body-2'
       }
     }, processTokens(token.tokens, createElement, config))
   }

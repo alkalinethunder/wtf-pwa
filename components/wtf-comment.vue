@@ -1,31 +1,34 @@
 <template>
-  <v-flex class="d-flex flex-row mb-2 mt-2">
-    <v-avatar color="primary" />
-    <v-flex class="d-flex flex-column ml-3">
-      <v-flex class="d-flex flex-row align-center">
-        <h4 class="subtitle-2">
+  <div class="d-flex flex-row mt-2">
+    <wtf-avatar :user="comment.author" />
+    <div class="d-flex flex-column ml-3">
+      <span class="subtitle-2">
+        <nuxt-link
+          class="text--primary wtf-link"
+          :to="`/u/${comment.author.username}`"
+        >
           {{ displayname }}
-        </h4>
-        <small class="caption ml-1">
+        </nuxt-link>
+        <small class="caption text--secondary">
           {{ timeAgo }}
         </small>
-      </v-flex>
+      </span>
 
-      <p class="body-1">
+      <span class="body-2">
         {{ text }}
         <br>
         <a v-if="less !== comment.body" @click="showMore = !showMore">
           {{ showMoreText }}
         </a>
-      </p>
+      </span>
 
-      <v-flex class="d-flex flex-row align-center">
+      <div class="d-flex flex-row align-center mb-2">
         <slot name="comment-actions" />
-      </v-flex>
+      </div>
 
       <slot />
-    </v-flex>
-  </v-flex>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -49,7 +52,7 @@ export default {
       return this.showMore ? 'Show less' : 'Show more'
     },
     less () {
-      return truncate(this.comment.body, 120)
+      return truncate(this.comment.body, 288)
     },
     text () {
       return this.showMore ? this.comment.body : this.less

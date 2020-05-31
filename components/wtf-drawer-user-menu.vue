@@ -1,7 +1,8 @@
 <template>
   <div>
     <v-list-item v-if="$auth.loggedIn" two-line>
-      <v-list-item-content>
+      <wtf-avatar :user="$auth.user" />
+      <v-list-item-content class="ml-3">
         <v-list-item-title>{{ displayname }}</v-list-item-title>
         <v-list-item-subtitle v-if="admin">
           Administrating
@@ -24,12 +25,20 @@
         <v-list-item-title>Not logged in.</v-list-item-title>
       </v-list-item-content>
 
-      <v-btn icon to="/auth/login">
-        <v-icon>mdi-login</v-icon>
-      </v-btn>
-      <v-btn icon to="/auth/register">
-        <v-icon>mdi-account-plus</v-icon>
-      </v-btn>
+      <wtf-login>
+        <template v-slot:activator="{ on }">
+          <v-btn icon v-on="on">
+            <v-icon>mdi-login</v-icon>
+          </v-btn>
+        </template>
+      </wtf-login>
+      <wtf-create-account>
+        <template v-slot:activator="{ on }">
+          <v-btn icon v-on="on">
+            <v-icon>mdi-account-plus</v-icon>
+          </v-btn>
+        </template>
+      </wtf-create-account>
       <wtf-dark-mode-toggle />
     </v-list-item>
   </div>

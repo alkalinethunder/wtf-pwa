@@ -1,6 +1,7 @@
 require('dotenv').config()
 const fs = require('fs')
 const path = require('path')
+const morgan = require('morgan')
 const express = require('express')
 const consola = require('consola')
 const { Nuxt, Builder } = require('nuxt')
@@ -9,6 +10,7 @@ const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const config = require('../nuxt.config.js')
 const SiteSetting = require('./models/sitesetting')
+const uploadsPath = path.join(__dirname, '..', 'uploads')
 const themesPath = path.join(__dirname, '..', 'themes')
 const themePath = path.join(themesPath, 'material')
 const themeManifestPath = path.join(themePath, 'manifest.json')
@@ -38,16 +40,22 @@ async function start (siteSettings) {
   const MenuRouter = require('./routes/menu')
   const CategoryRouter = require('./routes/category')
   const CommentsRouter = require('./routes/comments')
+  const CommentRouter = require('./routes/comment')
 
+  // We kinda need this to parse POST requests.
+  app.use(bodyParser.json())
+  app.use(bodyParser.urlencoded({ extended: true }))
+
+  // Holy fuck how did we go this long without this
+  app.use(morgan('dev'))
+
+  // And that's the frontend.
   await nuxt.ready()
   // Build only in dev mode
   if (config.dev) {
     const builder = new Builder(nuxt)
     await builder.build()
   }
-
-  // allow body-parser support.
-  app.use(bodyParser())
 
   // give API routes so we have a backend.
   app.use('/api/posts', postsRoute)
@@ -61,7 +69,10 @@ async function start (siteSettings) {
   app.use('/api/menu', MenuRouter)
   app.use('/api/category', CategoryRouter)
   app.use('/api/comments', CommentsRouter)
+  app.use('/api/comment', CommentRouter)
 
+  // Prevents nuxt from taking over on any requests that intended on interacting with
+  // the /api URLs, and that ended up getting a 404.
   app.use(function (req, res, next) {
     if (req.path.startsWith('/api')) {
       res.status(404).json({
@@ -72,10 +83,14 @@ async function start (siteSettings) {
     }
   })
 
+  // Static files.
+  app.use(express.static(uploadsPath))
+
   // Give nuxt middle`ware to express
   app.use(nuxt.render)
 
-  // Listen the server
+  // Make the server listen.
+  // Jesus fuck, the example file for this was made with poor grammar. Ew.
   app.listen(port, host)
   consola.ready({
     message: `Server listening on http://${host}:${port}`,

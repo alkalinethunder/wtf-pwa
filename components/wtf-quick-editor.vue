@@ -7,8 +7,8 @@
       width="1200"
     >
       <template v-slot:activator="{ on }">
-        <v-btn text v-on="on">
-          Quick Edit
+        <v-btn icon v-on="on">
+          <v-icon>mdi-lead-pencil</v-icon>
         </v-btn>
       </template>
       <v-card>
