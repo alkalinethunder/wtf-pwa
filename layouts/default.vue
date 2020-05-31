@@ -34,7 +34,7 @@
       dark
       flat
       class="d-xs-block d-sm-none"
-      :color="themeBackground"
+      color="primary"
     >
       <v-app-bar-nav-icon @click="drawer = !drawer" />
 
