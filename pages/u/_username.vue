@@ -4,10 +4,9 @@
       <template slot="prepend">
         <v-responsive :aspect-ratio="48/9" :style="coverStyle">
           <v-flex class="d-flex flex-row justify-end mt-2 mr-2 align-center">
-            <v-menu left offset-y>
+            <v-menu v-if="canEdit" left offset-y>
               <template v-slot:activator="{ on }">
                 <v-btn
-                  v-if="canEdit"
                   icon
                   v-on="on"
                 >
@@ -290,7 +289,11 @@ export default {
           this.edit = {}
           this.editProfile = false
 
-          this.$auth.setUser(newUser.data)
+          // This single if statement means the difference between this being sane code and
+          // this code having a MAJOR SECURITY FLAW. Damnit, Michael.
+          if (newUser.data._id === this.$auth.user._id) {
+            this.$auth.setUser(newUser.data)
+          }
         }
       } catch (err) {
         // idk
