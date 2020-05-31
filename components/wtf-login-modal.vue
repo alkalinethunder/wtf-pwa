@@ -42,6 +42,7 @@
         <v-card-actions>
           <v-btn
             text
+            to="/auth/register"
           >
             Create account
           </v-btn>

@@ -75,8 +75,9 @@
         <v-card-actions>
           <v-btn
             text
+            to="/auth/login"
           >
-            Create account
+            Existing account?
           </v-btn>
           <v-spacer />
           <v-btn
