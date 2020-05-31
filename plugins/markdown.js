@@ -31,6 +31,7 @@ Vue.use(mdRenderer, {
   marked: {
     gfm: true,
     breaks: true,
+    mangle: false,
     tokenizer: {
       inlineText (src, inRawBlock, smartypants) {
         // FUCK that's a long-ass regex I stole from marked's code.
