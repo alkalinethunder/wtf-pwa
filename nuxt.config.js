@@ -132,7 +132,7 @@ module.exports = {
   ** See https://axios.nuxtjs.org/options
   */
   axios: {
-    baseURL: process.env.BASE_URL || 'https://new.alkalinethunder.wtf/'
+    baseURL: process.env.BASE_URL || 'https://alkalinethunder.wtf/'
   },
   /*
   ** vuetify module configuration
