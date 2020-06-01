@@ -341,10 +341,10 @@ export default {
         formData.set('file', this.coverToUpload)
 
         this.$axios.post(`/api/users/cover/${this.profile._id}`, formData)
-          .then((res) => {
+          .then(async (res) => {
             this.profile.cover = res.data.url
             if (this.profile._id === this.$auth.user._id) {
-              this.$auth.setUser(this.profile)
+              this.$auth.setUser((await this.$axios.get('/api/auth/user')).data)
             }
             this.cancelCover()
           }).catch((err) => {
@@ -360,10 +360,10 @@ export default {
         formData.set('file', this.avatarToUpload)
 
         this.$axios.post(`/api/users/avatar/${this.profile._id}`, formData)
-          .then((res) => {
+          .then(async (res) => {
             this.profile.avatar = res.data.url
             if (this.profile._id === this.$auth.user._id) {
-              this.$auth.setUser(this.profile)
+              this.$auth.setUser((await this.$axios.get('/api/auth/user')).data)
             }
             this.cancelAvatar()
           }).catch((err) => {
