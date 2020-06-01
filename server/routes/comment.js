@@ -5,7 +5,7 @@ const Comment = require('../models/comment')
 const router = express.Router()
 
 function canEdit (comment, user) {
-  if (comment.author._id === user._id) {
+  if (comment.author.id === user.id) {
     return true
   } else {
     return user.owner || user.admin || user.editor || user.moderator

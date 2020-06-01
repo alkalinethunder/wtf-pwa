@@ -28,34 +28,38 @@ class Auth {
     }
   }
 
-  authenticate (req, res, next) {
-    const authHeader = req.headers.authorization
-    const token = authHeader && authHeader.split(' ')[1]
+  async authenticate (req, res, next) {
+    try {
+      const authHeader = req.headers.authorization
+      const token = authHeader && authHeader.split(' ')[1]
 
-    if (token) {
-      jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-        if (err) {
-          res.status(401).json({
-            message: err.message
-          })
-        } else if (user) {
+      if (token) {
+        const payload = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+
+        const user = await User.findOne({ _id: payload._id })
+
+        if (user) {
           if (user.banned) {
-            res.status(451).json({
+            return res.status(451).json({
               message: 'User has been banned.'
             })
           } else {
             req.user = user
-            next()
+            return next()
           }
         } else {
-          res.status(401).json({
+          return res.status(401).json({
             message: 'User must be authenticated to access this endpoint.'
           })
         }
-      })
-    } else {
-      res.status(401).json({
-        message: 'User must be authenticated to access this endpoint.'
+      } else {
+        return res.status(401).json({
+          message: 'User must be authenticated to access this endpoint.'
+        })
+      }
+    } catch (err) {
+      return res.status(500).json({
+        message: err.message
       })
     }
   }

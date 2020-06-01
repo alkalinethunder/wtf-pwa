@@ -268,7 +268,7 @@ router.post('/profile/:id', auth.authenticate, async function (req, res) {
     const user = await User.findById(req.params.id)
 
     if (user) {
-      const hasPermission = (req.user._id === user._id || req.user.owner || req.user.admin)
+      const hasPermission = (req.user.id === user.id || req.user.owner || req.user.admin)
       if (hasPermission) {
         user.displayName = req.body.displayName || ''
         user.about = req.body.about || ''
@@ -298,7 +298,7 @@ router.post('/avatar/:id', auth.authenticate, upload.single('file'), async funct
   try {
     const user = await User.findById(req.params.id)
     if (user) {
-      if (user._id === req.user._id || req.user.owner || req.user.admin) {
+      if (user.id === req.user.id || req.user.owner || req.user.admin) {
         user.avatar = `/avatars/${req.file.filename}`
         await user.save()
         res.status(200).json({
@@ -325,7 +325,7 @@ router.post('/cover/:id', auth.authenticate, upload.single('file'), async functi
   try {
     const user = await User.findById(req.params.id)
     if (user) {
-      if (user._id === req.user._id || req.user.owner || req.user.admin) {
+      if (user.id === req.user.id || req.user.owner || req.user.admin) {
         user.cover = `/covers/${req.file.filename}`
         await user.save()
         res.status(200).json({
