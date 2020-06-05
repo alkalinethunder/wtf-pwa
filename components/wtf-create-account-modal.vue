@@ -13,6 +13,12 @@
         @submit="login"
       >
         <v-card-title>Create new account</v-card-title>
+        <v-card-subtitle>
+          Create a new account to post comments and access other member-only goodies.  Already have an account?
+          <nuxt-link to="/auth/login">
+            Log in!
+          </nuxt-link>
+        </v-card-subtitle>
 
         <v-divider />
 
@@ -31,7 +37,7 @@
           />
 
           <v-row>
-            <v-col cols="6">
+            <v-col cols="12" md="6">
               <v-text-field
                 v-model="user.email"
                 type="email"
@@ -39,7 +45,7 @@
                 label="Email address"
               />
             </v-col>
-            <v-col cols="6">
+            <v-col cols="12" md="6">
               <v-text-field
                 v-model="user.confirmEmail"
                 type="email"
@@ -49,7 +55,7 @@
             </v-col>
           </v-row>
           <v-row>
-            <v-col>
+            <v-col cols="12" md="6">
               <v-text-field
                 v-model="user.password"
                 type="password"
@@ -61,7 +67,7 @@
               </span>
             </v-col>
 
-            <v-col cols="6">
+            <v-col cols="12" md="6">
               <v-text-field
                 v-model="user.confirmPassword"
                 type="password"
@@ -73,12 +79,6 @@
         </v-card-text>
 
         <v-card-actions>
-          <v-btn
-            text
-            to="/auth/login"
-          >
-            Existing account?
-          </v-btn>
           <v-spacer />
           <v-btn
             text

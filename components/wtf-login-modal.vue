@@ -13,6 +13,9 @@
         @submit="login"
       >
         <v-card-title>Log in</v-card-title>
+        <v-card-subtitle>
+          Log in to post comments and access some other member-only goodies.  Don't have an account? <nuxt-link to="/auth/register">Create one!</nuxt-link>
+        </v-card-subtitle>>
 
         <v-divider />
 
@@ -40,12 +43,6 @@
         </v-card-text>
 
         <v-card-actions>
-          <v-btn
-            text
-            to="/auth/register"
-          >
-            Create account
-          </v-btn>
           <v-spacer />
           <v-btn
             text
